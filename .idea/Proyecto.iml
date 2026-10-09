@@ -118,6 +118,8 @@
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/tijsverkoyen/css-to-inline-styles" />
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/voku/portable-ascii" />
+      <excludeFolder url="file://$MODULE_DIR$/Apuntame/storage/app" />
+      <excludeFolder url="file://$MODULE_DIR$/Apuntame/storage/framework" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
