@@ -1,94 +1,91 @@
 
 @extends('layouts.app')
 
-@section('title', 'Catálogo | Cine y Series')
+@section('title', 'Inicio | MiCineSeries')
 
 @section('content')
 
-    <h1>Catálogo</h1>
-    <p>Explora las películas y series disponibles.</p>
+    <form class="filtros" method="GET" action="{{ route('contenidos.index') }}">
+        <div class="campo">
+            <label for="buscar">Buscar</label>
+            <input id="buscar" name="buscar" type="search"
+                   value="{{ $busqueda }}" placeholder="Buscar título...">
+        </div>
 
-    <div class="filtros">
-        <a href="{{ route('contenidos.index') }}"
-           class="boton {{ !$tipo ? 'activo' : '' }}">
-            Todo
-        </a>
+        <div class="campo">
+            <label for="tipo">Formato</label>
+            <select id="tipo" name="tipo">
+                <option value="">Todos</option>
+                <option value="pelicula" @selected($tipo === 'pelicula')>Películas</option>
+                <option value="serie" @selected($tipo === 'serie')>Series</option>
+            </select>
+        </div>
 
-        <a href="{{ route('contenidos.index', ['tipo' => 'pelicula']) }}"
-           class="boton {{ $tipo === 'pelicula' ? 'activo' : '' }}">
-            Películas
-        </a>
+        <div class="campo">
+            <label for="genero">Género</label>
+            <select id="genero" name="genero">
+                <option value="">Todos</option>
+                @foreach ($generos as $genero)
+                    <option value="{{ $genero->id }}"
+                        @selected((string) $generoId === (string) $genero->id)>
+                        {{ $genero->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-        <a href="{{ route('contenidos.index', ['tipo' => 'serie']) }}"
-           class="boton {{ $tipo === 'serie' ? 'activo' : '' }}">
-            Series
-        </a>
-    </div>
+        <div class="campo">
+            <label for="anio">Año</label>
+            <select id="anio" name="anio">
+                <option value="">Todos</option>
+                @foreach ($anios as $a)
+                    <option value="{{ $a }}"
+                        @selected((string) $anio === (string) $a)>
+                        {{ $a }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-    @if ($contenidos->isEmpty())
-        <p>No hay contenidos para mostrar.</p>
+        <div class="campo">
+            <label>&nbsp;</label>
+            <button class="boton" type="submit">Filtrar</button>
+        </div>
+    </form>
+
+    @if ($busqueda || $tipo || $generoId || $anio)
+        <section class="seccion">
+            <div class="titulo-seccion">
+                <h2>RESULTADOS</h2>
+                <a class="ver-todo" href="{{ route('contenidos.index') }}">
+                    Limpiar filtros
+                </a>
+            </div>
+
+            @include('contenidos._tarjetas', ['lista' => $contenidos->getCollection()])
+
+            <div class="paginacion">{{ $contenidos->links() }}</div>
+        </section>
     @else
+        <section class="seccion">
+            <div class="titulo-seccion">
+                <h2>TENDENCIAS</h2>
+                <a class="ver-todo" href="{{ route('contenidos.index') }}">Ver catálogo →</a>
+            </div>
 
-        <div class="catalogo">
-            @foreach ($contenidos as $contenido)
-                <article class="tarjeta">
+            @include('contenidos._tarjetas', ['lista' => $contenidos->getCollection()->take(6)])
+        </section>
 
-                    @if ($contenido->imagen)
-                        <img
-                            src="{{ $contenido->imagen }}"
-                            alt="{{ $contenido->titulo }}"
-                            loading="lazy"
-                        >
-                    @else
-                        <div class="sin-imagen">
-                            Sin imagen
-                        </div>
-                    @endif
+        <section class="seccion">
+            <div class="titulo-seccion">
+                <h2>PELÍCULAS Y SERIES</h2>
+                <a class="ver-todo" href="{{ route('contenidos.index') }}">Ver todo →</a>
+            </div>
 
-                    <div class="contenido-tarjeta">
-                        <h2>{{ $contenido->titulo }}</h2>
+            @include('contenidos._tarjetas', ['lista' => $contenidos->getCollection()->slice(6, 6)])
+        </section>
 
-                        <span class="etiqueta">
-                        {{ $contenido->tipo === 'pelicula' ? 'Película' : 'Serie' }}
-                    </span>
-
-                        @if ($contenido->fecha_estreno)
-                            <p>
-                                Estreno:
-                                {{ \Carbon\Carbon::parse($contenido->fecha_estreno)->format('d/m/Y') }}
-                            </p>
-                        @endif
-
-                        @if ($contenido->tipo === 'pelicula' && $contenido->duracion)
-                            <p>{{ $contenido->duracion }} minutos</p>
-                        @endif
-
-                        <div>
-                            @foreach ($contenido->generos as $genero)
-                                <span class="etiqueta">
-                                {{ $genero->nombre }}
-                            </span>
-                            @endforeach
-                        </div>
-
-                        <p>
-                            {{ \Illuminate\Support\Str::limit($contenido->descripcion, 100) }}
-                        </p>
-
-                        <a class="boton"
-                           href="{{ route('contenidos.show', $contenido) }}">
-                            Ver detalles
-                        </a>
-                    </div>
-
-                </article>
-            @endforeach
-        </div>
-
-        <div class="paginacion">
-            {{ $contenidos->links() }}
-        </div>
-
+        <div class="paginacion">{{ $contenidos->links() }}</div>
     @endif
 
 @endsection

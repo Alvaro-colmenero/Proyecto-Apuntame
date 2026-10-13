@@ -1,81 +1,86 @@
 
 @extends('layouts.app')
 
-@section('title', $contenido->titulo . ' | Cine y Series')
+@section('title', $contenido->titulo . ' | MiCineSeries')
 
 @section('content')
 
     <p>
-        <a class="boton" href="{{ route('contenidos.index') }}">
+        <a class="boton boton-secundario"
+           href="{{ route('contenidos.index') }}">
             ← Volver al catálogo
         </a>
     </p>
 
-    <div class="detalle">
+    <article class="detalle">
+        <div class="banner"
+             @if ($contenido->banner || $contenido->poster)
+                 style="background-image: url('{{ asset($contenido->banner ?: $contenido->poster) }}')"
+            @endif>
+        </div>
 
-        @if ($contenido->imagen)
-            <img
-                class="detalle-imagen"
-                src="{{ $contenido->imagen }}"
-                alt="{{ $contenido->titulo }}"
-            >
-        @endif
+        <div class="detalle-contenido">
+            @if ($contenido->poster)
+                <img class="detalle-poster"
+                     src="{{ asset($contenido->poster) }}"
+                     alt="Póster de {{ $contenido->titulo }}">
+            @else
+                <div class="detalle-poster poster-vacio">
+                    {{ $contenido->titulo }}
+                </div>
+            @endif
 
-        <h1>{{ $contenido->titulo }}</h1>
+            <div class="detalle-texto">
+            <span class="etiqueta">
+                {{ $contenido->tipo === 'pelicula' ? 'Película' : 'Serie' }}
+            </span>
 
-        <p>
-        <span class="etiqueta">
-            {{ $contenido->tipo === 'pelicula' ? 'Película' : 'Serie' }}
-        </span>
-        </p>
+                <h1>{{ $contenido->titulo }}</h1>
 
-        <p>
-            <strong>Fecha de estreno:</strong>
-            {{ $contenido->fecha_estreno
-                ? \Carbon\Carbon::parse($contenido->fecha_estreno)->format('d/m/Y')
-                : 'No disponible' }}
-        </p>
+                <p class="descripcion">
+                    {{ $contenido->fecha_estreno
+                        ? \Carbon\Carbon::parse($contenido->fecha_estreno)->format('Y')
+                        : 'Año desconocido' }}
 
-        @if ($contenido->tipo === 'pelicula')
-            <p>
-                <strong>Duración:</strong>
-                {{ $contenido->duracion
-                    ? $contenido->duracion . ' minutos'
-                    : 'No disponible' }}
-            </p>
-        @else
-            <p>
-                <strong>Estado:</strong>
-                {{ $contenido->estado_serie }}
-            </p>
-        @endif
+                    @if ($contenido->tipo === 'pelicula' && $contenido->duracion)
+                        · {{ $contenido->duracion }} minutos
+                    @elseif ($contenido->tipo === 'serie')
+                        · {{ $contenido->estado_serie }}
+                    @endif
+                </p>
 
-        <h3>Descripción</h3>
-        <p>{{ $contenido->descripcion ?: 'Sin descripción disponible.' }}</p>
+                <p class="descripcion">
+                    {{ $contenido->descripcion ?: 'No hay descripción disponible.' }}
+                </p>
 
-        <h3>Géneros</h3>
+                <div>
+                    @forelse ($contenido->generos as $genero)
+                        <span class="etiqueta">{{ $genero->nombre }}</span>
+                    @empty
+                        <span class="descripcion">Sin géneros asignados.</span>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </article>
 
-        @forelse ($contenido->generos as $genero)
-            <span class="etiqueta">{{ $genero->nombre }}</span>
-        @empty
-            <p>No hay géneros asignados.</p>
-        @endforelse
-
-        @if ($contenido->tipo === 'serie')
-            <h2>Temporadas y episodios</h2>
+    @if ($contenido->tipo === 'serie')
+        <section class="seccion">
+            <div class="titulo-seccion">
+                <h2>TEMPORADAS Y EPISODIOS</h2>
+            </div>
 
             @forelse ($contenido->temporadas as $temporada)
-                <section class="temporada">
-
+                <div class="temporada">
                     <h3>
                         Temporada {{ $temporada->numero }}
                         @if ($temporada->titulo)
-                            - {{ $temporada->titulo }}
+                            — {{ $temporada->titulo }}
                         @endif
                     </h3>
 
                     @if ($temporada->episodios->isEmpty())
-                        <p>No hay episodios registrados.</p>
+                        <p class="descripcion">No hay episodios registrados.</p>
                     @else
                         <ul>
                             @foreach ($temporada->episodios as $episodio)
@@ -84,19 +89,19 @@
                                     {{ $episodio->titulo }}
 
                                     @if ($episodio->duracion)
-                                        ({{ $episodio->duracion }} min)
+                                        · {{ $episodio->duracion }} min
                                     @endif
                                 </li>
                             @endforeach
                         </ul>
                     @endif
-
-                </section>
+                </div>
             @empty
-                <p>Esta serie todavía no tiene temporadas registradas.</p>
+                <p class="descripcion">
+                    Esta serie todavía no tiene temporadas registradas.
+                </p>
             @endforelse
-        @endif
-
-    </div>
+        </section>
+    @endif
 
 @endsection

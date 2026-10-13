@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Contenido extends Model
 {
     protected $table = 'contenidos';
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -16,7 +15,8 @@ class Contenido extends Model
         'descripcion',
         'fecha_estreno',
         'duracion',
-        'imagen',
+        'poster',
+        'banner',
         'estado_serie',
     ];
 
