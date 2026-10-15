@@ -60,7 +60,7 @@ class ContenidoController extends Controller
         // los filtros al cambiar de página.
         $contenidos = $consulta
             ->orderBy('titulo', 'asc')
-            ->paginate(12)
+            ->paginate(24)
             ->withQueryString();
 
         // Obtenemos todos los géneros ordenados por nombre

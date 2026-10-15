@@ -29,7 +29,7 @@
                         {{ $contenido->tipo === 'pelicula' ? 'Película' : 'Serie' }}
                     </div>
 
-                    @foreach ($contenido->generos->take(3) as $genero)
+                    @foreach ($contenido->generos->take(2) as $genero)
                         <span class="etiqueta">{{ $genero->nombre }}</span>
                     @endforeach
                 </div>

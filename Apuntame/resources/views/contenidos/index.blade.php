@@ -82,7 +82,7 @@
                 <a class="ver-todo" href="{{ route('contenidos.index') }}">Ver todo →</a>
             </div>
 
-            @include('contenidos._tarjetas', ['lista' => $contenidos->getCollection()->slice(6, 6)])
+            @include('contenidos._tarjetas', ['lista' => $contenidos->getCollection()->slice(12, 12)])
         </section>
 
         <div class="paginacion">{{ $contenidos->links() }}</div>
