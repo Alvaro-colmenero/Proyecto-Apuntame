@@ -8,8 +8,7 @@
     <form class="filtros" method="GET" action="{{ route('contenidos.index') }}">
         <div class="campo">
             <label for="buscar">Buscar</label>
-            <input id="buscar" name="buscar" type="search"
-                   value="{{ $busqueda }}" placeholder="Buscar título...">
+            <input id="buscar" name="buscar" type="search" value="{{ $busqueda }}" placeholder="Buscar título...">
         </div>
 
         <div class="campo">

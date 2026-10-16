@@ -79,11 +79,89 @@
             .detalle-texto h1 {font-size: 25px;}
             .banner {height: 220px;}
         }
+
+        .auth-page {min-height: calc(100vh - 160px);display: flex;align-items: center;justify-content: center;padding: 35px 16px 60px;position: relative;isolation: isolate;}
+        .auth-page::before {content: "";position: absolute;width: 360px;height: 360px;top: 8%;left: 50%;transform: translateX(-50%);background: #13b9cc;opacity: 0.12;filter: blur(110px);border-radius: 50%;z-index: -1;pointer-events: none;}
+        .auth-card {width: 100%;max-width: 460px;padding: 38px;background: rgba(13, 27, 37, 0.94);border: 1px solid #2a414f;border-radius: 18px;box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);backdrop-filter: blur(16px);animation: authEntrada 0.45s ease both;}
+        .auth-brand {text-align: center;margin-bottom: 28px;}  .auth-icon {width: 62px;height: 62px;display: grid;place-items: center;margin: 0 auto 17px;border-radius: 18px;background: rgba(37, 191, 208, 0.12);border: 1px solid rgba(37, 191, 208, 0.3);color: #25bfd0;font-size: 29px;}
+        .auth-brand h1 {margin: 0 0 10px;font-size: 28px;letter-spacing: -0.7px;color: #edf5fa;}
+        .auth-brand p {margin: 0;color: #9eb3c2;font-size: 14px;line-height: 1.6;}
+        .auth-form {display: flex;flex-direction: column;gap: 19px;}
+        .auth-field label {display: block;margin-bottom: 9px;color: #dce8ef;font-size: 13px;font-weight: 600;}
+
+        .auth-field input {width: 100%;padding: 14px 15px;background: #101f29;color: #edf5fa;border: 1px solid #304653;border-radius: 9px;font-size: 14px;transition: border-color 0.2s, box-shadow 0.2s;}
+        .auth-field input::placeholder {color: #6f8797;}
+        .auth-field input:focus {outline: none;border-color: #25bfd0;box-shadow: 0 0 0 3px rgba(37, 191, 208, 0.13);}
+        .auth-field input:-webkit-autofill,
+        .auth-field input:-webkit-autofill:hover,
+        .auth-field input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #edf5fa;
+            -webkit-box-shadow: 0 0 0 1000px #101f29 inset;
+            transition: background-color 9999s ease-in-out 0s;
+        }
+
+        .auth-button {width: 100%;padding: 14px 18px;margin-top: 5px;border: 0;border-radius: 9px;background: linear-gradient(135deg, #25bfd0, #37d2c3);color: #07151c;font-size: 15px;font-weight: 700;cursor: pointer;transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;}
+        .auth-button:hover {transform: translateY(-2px);box-shadow: 0 8px 25px rgba(37, 191, 208, 0.2);filter: brightness(1.08);}
+        .auth-button:active {transform: translateY(0);}
+        .auth-error {margin-top: 7px;color: #ff9292;font-size: 12px;line-height: 1.5;}
+        .auth-alert {padding: 12px 14px;border: 1px solid rgba(255, 100, 100, 0.3);border-radius: 9px;background: rgba(255, 75, 75, 0.08);color: #ffaaaa;font-size: 13px;line-height: 1.6;}
+        .auth-footer {margin-top: 25px;padding-top: 21px;border-top: 1px solid #253744;color: #9eb3c2;font-size: 13px;text-align: center;line-height: 1.8;}
+        .auth-footer a {color: #25bfd0;font-weight: 700;transition: color 0.2s;}
+        .auth-footer a:hover {color: #73e5ec;text-decoration: underline;}
+        .auth-back {display: inline-block;margin-top: 19px;color: #9eb3c2;font-size: 13px;text-align: center;}
+        .auth-back:hover {color: #25bfd0;}
+
+        @keyframes authEntrada {
+            from {opacity: 0;transform: translateY(14px);}
+            to {opacity: 1;transform: translateY(0);}
+        }
+
+        @media (max-width: 650px) {
+            .auth-page {min-height: auto;padding: 25px 0 40px;}
+            .auth-card {padding: 28px 22px;border-radius: 14px;}
+            .auth-brand h1 {font-size: 25px;}
+            .auth-icon {width: 55px;height: 55px;font-size: 25px;}
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .auth-card {animation: none;}
+            .auth-button,
+            .auth-field input,
+            .auth-footer a {transition: none;}
+        }
+
+        .auth-nav {display: flex;align-items: center;justify-content: center;gap: 10px;flex-wrap: wrap;}
+        .nav-auth-link {display: inline-flex;align-items: center;justify-content: center;padding: 10px 16px;border: 1px solid #304653;border-radius: 8px;background: #142630;color: #dce8ef;font-family: inherit;font-size: 13px;font-weight: 600;text-decoration: none;white-space: nowrap;cursor: pointer;transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;}
+        .nav-auth-link:hover {background: #203945;border-color: #25bfd0;color: #5ad8e3;transform: translateY(-1px);}
+        .nav-auth-primary {background: #25bfd0;border-color: #25bfd0;color: #07151c;}
+        .nav-auth-primary:hover {background: #5ad8e3;border-color: #5ad8e3;color: #07151c;}
+        .nav-logout-form {display: inline-flex;margin: 0;}
+        .nav-logout-button {background: transparent;border-color: #624044;color: #ffaaaa;}
+        .nav-logout-button:hover {background: rgba(255, 100, 100, 0.1);border-color: #ff7777;color: #ffaaaa;}
+
+        @media (max-width: 650px) {
+            .auth-nav {gap: 7px;}
+            .nav-auth-link {padding: 9px 11px;font-size: 12px;}
+        }
     </style>
 
 </head>
 <body>
 <header>
+    <div class="auth-nav">
+        @guest
+            <a class="nav-auth-link" href="{{ route('login') }}">Iniciar sesión</a>
+            <a class="nav-auth-link nav-auth-primary" href="{{ route('registro') }}">Crear cuenta</a>
+        @else
+            <a class="nav-auth-link" href="{{ route('perfil.index') }}">Mi perfil</a>
+
+            <form class="nav-logout-form" method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="nav-auth-link nav-logout-button" type="submit">Cerrar sesión</button>
+            </form>
+        @endguest
+    </div>
+
     <a class="logo" href="{{ route('contenidos.index') }}">
         <span>Apuntame</span>
     </a>

@@ -13,17 +13,12 @@
     </p>
 
     <article class="detalle">
-        <div class="banner"
-             @if ($contenido->banner || $contenido->poster)
-                 style="background-image: url('{{ asset($contenido->banner ?: $contenido->poster) }}')"
-            @endif>
+        <div class="banner" @if ($contenido->banner || $contenido->poster) style="background-image: url('{{ asset($contenido->banner ?: $contenido->poster) }}')" @endif>
         </div>
 
         <div class="detalle-contenido">
             @if ($contenido->poster)
-                <img class="detalle-poster"
-                     src="{{ asset($contenido->poster) }}"
-                     alt="Póster de {{ $contenido->titulo }}">
+                <img class="detalle-poster" src="{{ asset($contenido->poster) }}" alt="Póster de {{ $contenido->titulo }}">
             @else
                 <div class="detalle-poster poster-vacio">
                     {{ $contenido->titulo }}
@@ -38,10 +33,7 @@
                 <h1>{{ $contenido->titulo }}</h1>
 
                 <p class="descripcion">
-                    {{ $contenido->fecha_estreno
-                        ? \Carbon\Carbon::parse($contenido->fecha_estreno)->format('Y')
-                        : 'Año desconocido' }}
-
+                    {{ $contenido->fecha_estreno ? \Carbon\Carbon::parse($contenido->fecha_estreno)->format('Y') : 'Año desconocido' }}
                     @if ($contenido->tipo === 'pelicula' && $contenido->duracion)
                         · {{ $contenido->duracion }} minutos
                     @elseif ($contenido->tipo === 'serie')
