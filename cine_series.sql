@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-10-2026 a las 10:17:26
+-- Tiempo de generación: 16-10-2026 a las 13:25:12
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -404,8 +404,8 @@ INSERT INTO `temporadas` (`id`, `contenido_id`, `numero`, `titulo`, `descripcion
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL,
-  `correo` varchar(100) NOT NULL,
-  `contrasena` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `foto` varchar(255) DEFAULT NULL,
   `descripcion` text DEFAULT NULL,
   `perfil_publico` tinyint(1) NOT NULL DEFAULT 1,
@@ -416,11 +416,12 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `contrasena`, `foto`, `descripcion`, `perfil_publico`, `fecha_registro`) VALUES
+INSERT INTO `usuarios` (`id`, `nombre`, `email`, `password`, `foto`, `descripcion`, `perfil_publico`, `fecha_registro`) VALUES
 (1, 'ana', 'ana@prueba.com', 'HASH_DE_PRUEBA_1', NULL, 'Me encantan la ciencia ficción y el misterio.', 1, '2026-10-09 10:00:24'),
 (2, 'carlos', 'carlos@prueba.com', 'HASH_DE_PRUEBA_2', NULL, 'Fan de las películas de acción.', 1, '2026-10-09 10:00:24'),
 (3, 'lucia', 'lucia@prueba.com', 'HASH_DE_PRUEBA_3', NULL, 'Veo series todos los fines de semana.', 1, '2026-10-09 10:00:24'),
-(4, 'david', 'david@prueba.com', 'HASH_DE_PRUEBA_4', NULL, 'Disfruto de la animación y la fantasía.', 0, '2026-10-09 10:00:24');
+(4, 'david', 'david@prueba.com', 'HASH_DE_PRUEBA_4', NULL, 'Disfruto de la animación y la fantasía.', 0, '2026-10-09 10:00:24'),
+(5, 'Álvaro Colmenero Rodríguez', 'acolrod814@g.educaand.es', '$2y$12$0FmDo2kSPDGQXziIUFtof.Rul7ifoO6bkeIVh3sSNX39pvb8ky0qG', NULL, NULL, 1, '2026-10-16 09:50:15');
 
 --
 -- Índices para tablas volcadas
@@ -491,7 +492,7 @@ ALTER TABLE `temporadas`
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nombre` (`nombre`),
-  ADD UNIQUE KEY `correo` (`correo`);
+  ADD UNIQUE KEY `correo` (`email`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -531,7 +532,7 @@ ALTER TABLE `temporadas`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas
