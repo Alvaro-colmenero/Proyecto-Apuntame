@@ -52,9 +52,7 @@
                     <input id="password_confirmation" type="password" name="password_confirmation" placeholder="Repite tu contraseña" autocomplete="new-password" minlength="8" required>
                 </div>
 
-                <button class="auth-button" type="submit">
-                    Crear mi cuenta →
-                </button>
+                <button class="auth-button" type="submit">Crear mi cuenta →</button>
             </form>
 
             <div class="auth-footer">

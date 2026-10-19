@@ -2,16 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contenido;
-use App\Models\Genero;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class PerfilController extends Controller
 {
     public function index()
     {
-        return view('perfil.index', [
+        $usuarioPerfil = auth()->user();
 
+        return view('perfil.index', [
+            'usuarioPerfil' => $usuarioPerfil,
+            'contenidosPerfil' => collect(),
+            'generosPerfil' => collect(),
+            'actividadPerfil' => collect(),
         ]);
+    }
+
+    public function actualizar(Request $request)
+    {
+        $usuario = $request->user();
+
+        $request->validate([
+            'avatar' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+            'banner' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+            ],
+        ]);
+
+        foreach (['avatar', 'banner'] as $campo) {
+            if (!$request->hasFile($campo)) {
+                continue;
+            }
+
+            $archivo = $request->file($campo);
+            $carpeta = public_path("images/usuario/{$campo}");
+
+            if (!File::isDirectory($carpeta)) {
+                File::makeDirectory($carpeta, 0755, true);
+            }
+
+            // El ID del usuario será el nombre de la imagen.
+            $nombreArchivo = $usuario->id . '.' . $archivo->extension();
+
+            // Elimina la imagen anterior si tenía otra extensión.
+            $rutaAnterior = $usuario->{$campo} ? public_path($usuario->{$campo}) : null;
+            $rutaNueva = $carpeta . DIRECTORY_SEPARATOR . $nombreArchivo;
+
+            if ($rutaAnterior && is_file($rutaAnterior) && realpath(dirname($rutaAnterior)) === realpath($carpeta) && realpath($rutaAnterior) !== realpath($rutaNueva)) {
+                File::delete($rutaAnterior);
+            }
+
+            // Sobrescribe la imagen si ya existe.
+            $archivo->move($carpeta, $nombreArchivo);
+
+            // Guarda la ruta relativa en el VARCHAR existente.
+            $usuario->{$campo} = "images/usuario/{$campo}/{$nombreArchivo}";
+        }
+
+        $usuario->save();
+
+        return redirect()
+            ->route('perfil.index')
+            ->with('success', 'Tu perfil se ha actualizado correctamente.');
     }
 }

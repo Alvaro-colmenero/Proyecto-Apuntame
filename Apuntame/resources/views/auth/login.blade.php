@@ -39,9 +39,7 @@
                     @enderror
                 </div>
 
-                <button class="auth-button" type="submit">
-                    Iniciar sesión →
-                </button>
+                <button class="auth-button" type="submit">Iniciar sesión →</button>
             </form>
 
             <div class="auth-footer">

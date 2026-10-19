@@ -8,12 +8,7 @@
                href="{{ route('contenidos.show', $contenido) }}">
 
                 @if ($contenido->poster)
-                    <img
-                        class="poster"
-                        src="{{ asset($contenido->poster) }}"
-                        alt="Póster de {{ $contenido->titulo }}"
-                        loading="lazy"
-                    >
+                    <img class="poster" src="{{ asset($contenido->poster) }}" alt="Póster de {{ $contenido->titulo }}" loading="lazy">
                 @else
                     <div class="poster-vacio">
                         {{ $contenido->titulo }}
