@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-10-2026 a las 13:25:12
+-- Tiempo de generación: 19-10-2026 a las 14:20:18
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -36,16 +36,6 @@ CREATE TABLE `amistades` (
   `fecha_respuesta` datetime DEFAULT NULL
 ) ;
 
---
--- Volcado de datos para la tabla `amistades`
---
-
-INSERT INTO `amistades` (`id`, `usuario_id`, `amigo_id`, `estado`, `fecha`, `fecha_respuesta`) VALUES
-(1, 1, 2, 'aceptada', '2026-10-09 10:00:25', '2025-01-05 12:00:00'),
-(2, 1, 3, 'pendiente', '2026-10-09 10:00:25', NULL),
-(3, 2, 4, 'aceptada', '2026-10-09 10:00:25', '2025-02-01 10:00:00'),
-(4, 4, 1, 'rechazada', '2026-10-09 10:00:25', '2025-02-03 09:00:00');
-
 -- --------------------------------------------------------
 
 --
@@ -61,27 +51,6 @@ CREATE TABLE `biblioteca` (
   `fecha_fin` date DEFAULT NULL,
   `notas` text DEFAULT NULL
 ) ;
-
---
--- Volcado de datos para la tabla `biblioteca`
---
-
-INSERT INTO `biblioteca` (`usuario_id`, `contenido_id`, `estado`, `puntuacion`, `fecha_inicio`, `fecha_fin`, `notas`) VALUES
-(1, 1, 'vista', 9.5, '2025-01-10', '2025-01-10', 'Final impresionante'),
-(1, 4, 'pendiente', NULL, NULL, NULL, NULL),
-(1, 7, 'vista', 10.0, '2025-01-15', '2025-03-20', 'Una de mis favoritas'),
-(1, 8, 'viendo', 8.5, '2025-02-01', NULL, 'Voy por la primera temporada'),
-(1, 12, 'pausada', 8.0, '2025-02-10', NULL, 'La retomaré'),
-(2, 2, 'vista', 8.5, '2025-01-12', '2025-01-12', NULL),
-(2, 3, 'vista', 9.0, '2025-01-05', '2025-01-05', 'Un clásico'),
-(2, 9, 'viendo', 9.0, '2025-02-15', NULL, 'Ideal para desconectar'),
-(2, 11, 'pendiente', NULL, NULL, NULL, NULL),
-(3, 5, 'vista', 9.0, '2025-02-02', '2025-02-02', NULL),
-(3, 6, 'pendiente', NULL, NULL, NULL, NULL),
-(3, 7, 'viendo', 9.0, '2025-03-01', NULL, NULL),
-(3, 10, 'vista', 9.5, '2025-01-20', '2025-02-01', 'Gran animación'),
-(4, 4, 'vista', 8.0, '2025-01-03', '2025-01-03', 'Me trae recuerdos'),
-(4, 8, 'abandonada', 6.0, '2025-01-10', NULL, 'La dejé a medias');
 
 -- --------------------------------------------------------
 
@@ -321,14 +290,6 @@ CREATE TABLE `episodios_vistos` (
   `fecha_visto` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
---
--- Volcado de datos para la tabla `episodios_vistos`
---
-
-INSERT INTO `episodios_vistos` (`usuario_id`, `episodio_id`, `fecha_visto`) VALUES
-(1, 2, '2025-03-01 20:00:00'),
-(1, 3, '2025-03-01 20:00:00');
-
 -- --------------------------------------------------------
 
 --
@@ -406,7 +367,8 @@ CREATE TABLE `usuarios` (
   `nombre` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `foto` varchar(255) DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `banner` varchar(255) DEFAULT NULL,
   `descripcion` text DEFAULT NULL,
   `perfil_publico` tinyint(1) NOT NULL DEFAULT 1,
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp()
@@ -416,12 +378,9 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombre`, `email`, `password`, `foto`, `descripcion`, `perfil_publico`, `fecha_registro`) VALUES
-(1, 'ana', 'ana@prueba.com', 'HASH_DE_PRUEBA_1', NULL, 'Me encantan la ciencia ficción y el misterio.', 1, '2026-10-09 10:00:24'),
-(2, 'carlos', 'carlos@prueba.com', 'HASH_DE_PRUEBA_2', NULL, 'Fan de las películas de acción.', 1, '2026-10-09 10:00:24'),
-(3, 'lucia', 'lucia@prueba.com', 'HASH_DE_PRUEBA_3', NULL, 'Veo series todos los fines de semana.', 1, '2026-10-09 10:00:24'),
-(4, 'david', 'david@prueba.com', 'HASH_DE_PRUEBA_4', NULL, 'Disfruto de la animación y la fantasía.', 0, '2026-10-09 10:00:24'),
-(5, 'Álvaro Colmenero Rodríguez', 'acolrod814@g.educaand.es', '$2y$12$0FmDo2kSPDGQXziIUFtof.Rul7ifoO6bkeIVh3sSNX39pvb8ky0qG', NULL, NULL, 1, '2026-10-16 09:50:15');
+INSERT INTO `usuarios` (`id`, `nombre`, `email`, `password`, `avatar`, `banner`, `descripcion`, `perfil_publico`, `fecha_registro`) VALUES
+(5, 'Álvaro Colmenero Rodríguez', 'acolrod814@g.educaand.es', '$2y$12$0FmDo2kSPDGQXziIUFtof.Rul7ifoO6bkeIVh3sSNX39pvb8ky0qG', 'images/usuario/avatar/5.jpg', 'images/usuario/banner/5.jpg', NULL, 1, '2026-10-16 09:50:15'),
+(6, 'Javier Martin Garcia', 'jmargar295w@g.educaand.es', '$2y$12$t4NNKQ1wNv/X9cmsVFHlPuvSVgZm0PvsJqVgseVFRMyhBC9M9X3Hm', NULL, NULL, NULL, 1, '2026-10-19 10:47:41');
 
 --
 -- Índices para tablas volcadas
@@ -532,7 +491,7 @@ ALTER TABLE `temporadas`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas
