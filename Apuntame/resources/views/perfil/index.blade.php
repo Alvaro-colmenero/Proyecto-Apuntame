@@ -5,10 +5,7 @@
 @section('content')
     @php
         $usuarioPerfil = $usuarioPerfil ?? auth()->user();
-        $nombrePerfil = $usuarioPerfil->nombre
-            ?? $usuarioPerfil->name
-            ?? 'Usuario';
-
+        $nombrePerfil = $usuarioPerfil->nombre ?? 'Usuario';
         $contenidosPerfil = collect($contenidosPerfil ?? []);
         $actividadPerfil = collect($actividadPerfil ?? []);
     @endphp
@@ -65,6 +62,31 @@
             </div>
         </section>
 
+
+        {{-- NAVEGACIÓN DEL PERFIL --}}
+        <nav class="perfil-navegacion" aria-label="Secciones del perfil">
+            <button type="button" class="perfil-tab activo"
+                    data-seccion="inicio" aria-selected="true">
+                <span>⌂</span> Inicio
+            </button>
+
+            <button type="button" class="perfil-tab"
+                    data-seccion="peliculas" aria-selected="false">
+                <span>▣</span> Películas
+            </button>
+
+            <button type="button" class="perfil-tab"
+                    data-seccion="series" aria-selected="false">
+                <span>▤</span> Series
+            </button>
+
+            <button type="button" class="perfil-tab"
+                    data-seccion="social" aria-selected="false">
+                <span>♧</span> Social
+            </button>
+        </nav>
+
+
         {{-- MENSAJES --}}
         @if(session('success'))
             <div class="perfil-mensaje perfil-mensaje-ok">
@@ -99,31 +121,24 @@
                         <span class="perfil-panel-icono">▤</span>
                     </div>
 
-                    @if($contenidosPerfil->isNotEmpty())
-                        <div class="perfil-biblioteca">
-                            @foreach($contenidosPerfil as $contenido)
-                                <article class="perfil-contenido">
-                                    @if(!empty($contenido->poster))
-                                        <img
-                                            src="{{ $contenido->poster }}"
-                                            alt="{{ $contenido->titulo ?? $contenido->nombre }}"
-                                        >
-                                    @endif
 
-                                    <h3>{{ $contenido->titulo ?? $contenido->nombre ?? 'Contenido' }}</h3>
-                                </article>
-                            @endforeach
-                        </div>
+                    @if($contenidosPerfil->isNotEmpty())
+                        <section class="seccion">
+                            <div class="titulo-seccion">
+                                <h2>MI BIBLIOTECA</h2>
+                                <span>{{ $contenidosPerfil->count() }} contenidos</span>
+                            </div>
+                            @include('contenidos._tarjetas', [ 'lista' => $contenidosPerfil ])
+                        </section>
                     @else
                         <div class="perfil-vacio">
-                            <span>▧</span>
-                            <h3>Tu próxima historia te espera</h3>
-                            <p>Cuando tengas contenidos guardados, aparecerán aquí.</p>
-                            <a href="{{ route('contenidos.index') }}">
-                                Descubrir películas y series →
+                            <p>Todavía no has agregado películas o series a tu biblioteca.</p>
+                            <a href="{{ route('contenidos.index') }}" class="boton">
+                                Explorar catálogo
                             </a>
                         </div>
                     @endif
+
                 </section>
 
             </div>
@@ -387,5 +402,9 @@
             @endif
 
         });
+
+
+
+
     </script>
 @endsection

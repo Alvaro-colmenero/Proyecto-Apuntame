@@ -3,22 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class PerfilController extends Controller
 {
+
     public function index()
     {
         $usuarioPerfil = auth()->user();
 
+        $contenidosPerfil = DB::table('biblioteca')
+            ->join('contenidos', 'biblioteca.contenido_id', '=', 'contenidos.id')
+            ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+            ->select(
+                'contenidos.*',
+                'biblioteca.estado',
+                'biblioteca.notas',
+                'biblioteca.puntuacion',
+                'biblioteca.fecha_inicio',
+                'biblioteca.fecha_fin'
+            )
+            ->get();
+
         return view('perfil.index', [
             'usuarioPerfil' => $usuarioPerfil,
-            'contenidosPerfil' => collect(),
+            'contenidosPerfil' => $contenidosPerfil,
             'generosPerfil' => collect(),
+            'generosEstadisticas' => collect(),
             'actividadPerfil' => collect(),
         ]);
     }
+
 
     public function actualizar(Request $request)
     {

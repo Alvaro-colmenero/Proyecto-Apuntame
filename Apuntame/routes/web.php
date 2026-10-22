@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PerfilController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContenidoController;
+use App\Http\Controllers\BibliotecaController;
 
 // CONTENIDOS
 Route::get('/', [ContenidoController::class, 'index'])->name('contenidos.index');
@@ -24,3 +25,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     Route::put('/perfil', [PerfilController::class, 'actualizar'])->name('perfil.actualizar');
 });
+
+
+Route::post('/biblioteca', [BibliotecaController::class, 'guardar'])
+    ->middleware('auth')
+    ->name('biblioteca.guardar');
+
+
+Route::get('/contenidos/{contenido}', [ContenidoController::class, 'show'])
+    ->name('contenidos.show');

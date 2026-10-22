@@ -1,14 +1,12 @@
-
 @extends('layouts.app')
-
 @section('title', $contenido->titulo . ' | MiCineSeries')
-
 @section('content')
+@include('biblioteca.modal')
+
 
     <p>
-        <a class="boton boton-secundario"
-           href="{{ route('contenidos.index') }}">
-            ← Volver al catálogo
+        <a class="boton boton-secundario" href="{{ url()->previous() }}">
+            ← Volver
         </a>
     </p>
 
@@ -31,6 +29,21 @@
             </span>
 
                 <h1>{{ $contenido->titulo }}</h1>
+
+
+                <button type="button"
+                        class="boton"
+                        data-abrir-biblioteca
+                        data-id="{{ $contenido->id }}"
+                        data-titulo="{{ $contenido->titulo }}"
+                        data-tipo="{{ $contenido->tipo }}"
+                        data-estado="{{ $estadoBiblioteca ?? 'pendiente' }}"
+                        data-portada="{{ $contenido->poster ? asset($contenido->poster) : '' }}"
+                        data-banner="{{ $contenido->banner ? asset($contenido->banner) : '' }}"
+                >
+                    + Añadir a mi lista
+                </button>
+
 
                 <p class="descripcion">
                     {{ $contenido->fecha_estreno ? \Carbon\Carbon::parse($contenido->fecha_estreno)->format('Y') : 'Año desconocido' }}

@@ -122,3 +122,103 @@
     .perfil-boton-archivo,
     .perfil-guardar {transition: none;}
 }
+
+
+.perfil-navegacion {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    overflow-x: auto;
+    padding: 12px 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.perfil-tab {
+    flex: 0 0 auto;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+.perfil-tab:hover,
+.perfil-tab.activo {
+    background: rgba(229,9,20,.15);
+    color: #ff5a62;
+}
+
+.perfil-tab.activo {
+    box-shadow: inset 0 -2px #e50914;
+}
+
+.perfil-seccion[hidden] {
+    display: none !important;
+}
+
+.perfil-seccion > .perfil-panel {
+    margin-bottom: 24px;
+}
+
+.perfil-resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.perfil-estadistica {
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    background: rgba(255,255,255,.035);
+}
+
+.perfil-estadistica p {
+    margin: 8px 0;
+    color: #aaa;
+}
+
+.perfil-estadistica strong {
+    font-size: 28px;
+}
+
+.perfil-genero {
+    margin: 14px 0;
+}
+
+.perfil-genero-texto {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+}
+
+.perfil-genero-barra {
+    height: 7px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+}
+
+.perfil-genero-barra span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #e50914;
+}
+
+@media (max-width: 700px) {
+    .perfil-resumen-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .perfil-tab {
+        padding: 10px 14px;
+    }
+}
+

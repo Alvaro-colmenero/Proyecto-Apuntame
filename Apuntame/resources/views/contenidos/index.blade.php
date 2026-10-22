@@ -1,8 +1,5 @@
-
 @extends('layouts.app')
-
 @section('title', 'Inicio | MiCineSeries')
-
 @section('content')
 
     <form class="filtros" method="GET" action="{{ route('contenidos.index') }}">

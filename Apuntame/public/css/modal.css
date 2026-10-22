@@ -1,0 +1,152 @@
+
+.modal-biblioteca[hidden],
+.biblioteca-portada[hidden] {
+    display: none !important;
+}
+
+.modal-biblioteca {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-biblioteca-fondo {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .8);
+    backdrop-filter: blur(4px);
+}
+
+.modal-biblioteca-contenido {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 14px;
+    background: var(--color-tarjeta, #202020);
+    color: var(--color-texto, #fff);
+    box-shadow: 0 12px 45px rgba(0, 0, 0, .5);
+}
+
+.modal-biblioteca-cerrar {
+    position: absolute;
+    z-index: 3;
+    top: 10px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .7);
+    color: white;
+    font-size: 27px;
+    cursor: pointer;
+}
+
+.biblioteca-banner {
+    height: 155px;
+    background-color: #333;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+
+.biblioteca-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, #202020, transparent);
+}
+
+.biblioteca-cabecera {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 0 22px 20px;
+    margin-top: -55px;
+    z-index: 1;
+}
+
+.biblioteca-portada {
+    width: 105px;
+    height: 155px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 7px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, .5);
+    background: #333;
+}
+
+.biblioteca-cabecera-texto {
+    min-width: 0;
+    padding-bottom: 4px;
+}
+
+.biblioteca-cabecera-texto h2 {
+    overflow-wrap: anywhere;
+    margin: 8px 0;
+}
+
+.modal-biblioteca-contenido form {
+    display: grid;
+    gap: 10px;
+    padding: 0 22px 22px;
+}
+
+.modal-biblioteca-contenido input,
+.modal-biblioteca-contenido select,
+.modal-biblioteca-contenido textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #555;
+    border-radius: 7px;
+    background: #292929;
+    color: white;
+    font: inherit;
+}
+
+.modal-biblioteca-contenido textarea {
+    resize: vertical;
+}
+
+.biblioteca-contador {
+    margin-top: -6px;
+    text-align: right;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.modal-biblioteca-acciones {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+    .biblioteca-banner {
+        height: 120px;
+    }
+
+    .biblioteca-portada {
+        width: 85px;
+        height: 125px;
+    }
+
+    .biblioteca-cabecera {
+        gap: 12px;
+        padding-inline: 15px;
+    }
+
+    .modal-biblioteca-contenido form {
+        padding-inline: 15px;
+    }
+}
