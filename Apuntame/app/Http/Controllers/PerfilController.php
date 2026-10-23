@@ -27,13 +27,27 @@ class PerfilController extends Controller
             )
             ->get();
 
+        $peliculasPerfil = $this->obtenerBibliotecaPorTipo(
+            auth()->id(),
+            'pelicula'
+        );
+
+        $seriesPerfil = $this->obtenerBibliotecaPorTipo(
+            auth()->id(),
+            'serie'
+        );
+
+
         return view('perfil.index', [
             'usuarioPerfil' => $usuarioPerfil,
             'contenidosPerfil' => $contenidosPerfil,
             'generosPerfil' => collect(),
             'generosEstadisticas' => collect(),
             'actividadPerfil' => collect(),
+            'peliculasPerfil' => $peliculasPerfil,
+            'seriesPerfil' => $seriesPerfil,
         ]);
+
     }
 
 
@@ -88,8 +102,35 @@ class PerfilController extends Controller
 
         $usuario->save();
 
-        return redirect()
-            ->route('perfil.index')
-            ->with('success', 'Tu perfil se ha actualizado correctamente.');
+    }
+
+    private function obtenerBibliotecaPorTipo(int $usuarioId, string $tipo)
+    {
+        return DB::table('biblioteca')
+            ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id'
+            )
+            ->where('biblioteca.usuario_id', $usuarioId)
+            ->where('contenidos.tipo', $tipo)
+            ->select(
+                'contenidos.*',
+                'biblioteca.estado as estado_usuario',
+                'biblioteca.puntuacion',
+                'biblioteca.fecha_inicio',
+                'biblioteca.fecha_fin',
+                'biblioteca.notas'
+            )
+            ->orderBy('contenidos.titulo')
+            ->get()
+            ->groupBy(function ($contenido) {
+                $estadosValidos = [
+                    'pendiente',
+                    'viendo',
+                    'vista',
+                    'pausada',
+                    'abandonada',
+                ];
+
+                return in_array($contenido->estado_usuario, $estadosValidos, true) ? $contenido->estado_usuario : 'pendiente';
+            });
     }
 }

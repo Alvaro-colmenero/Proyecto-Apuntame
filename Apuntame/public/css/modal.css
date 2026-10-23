@@ -150,3 +150,193 @@
         padding-inline: 15px;
     }
 }
+
+
+/* El atributo hidden siempre debe ocultar el modal */
+.modal-biblioteca[hidden] {
+    display: none !important;
+}
+
+/* Modal más ancho */
+.modal-biblioteca-contenido {
+    width: min(900px, calc(100vw - 36px));
+    max-width: 900px;
+    max-height: 92vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding: 30px;
+    overscroll-behavior: contain;
+}
+
+/* Banner superior */
+.biblioteca-banner {
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+}
+
+/* Póster y botón de favoritos */
+.biblioteca-portada-contenedor {
+    position: relative;
+    flex: 0 0 145px;
+    width: 145px;
+    align-self: flex-start;
+}
+
+.biblioteca-portada-contenedor .biblioteca-portada {
+    display: block;
+    width: 100%;
+    height: 215px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.biblioteca-portada-contenedor .biblioteca-portada[hidden],
+.biblioteca-portada-vacia[hidden] {
+    display: none !important;
+}
+
+.biblioteca-portada-vacia {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 215px;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background: rgba(128, 128, 128, 0.15);
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.biblioteca-boton-favorito {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    padding: 9px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.72);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.biblioteca-boton-favorito:hover {
+    transform: scale(1.08);
+}
+
+.biblioteca-icono-corazon {
+    width: 23px;
+    height: 23px;
+    fill: transparent;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    transition: fill 0.2s ease, color 0.2s ease;
+}
+
+.biblioteca-boton-favorito.es-favorito {
+    background: #fff;
+    color: #e63963;
+}
+
+.biblioteca-boton-favorito.es-favorito .biblioteca-icono-corazon {
+    fill: #e63963;
+    stroke: #e63963;
+}
+
+.biblioteca-texto-favorito {
+    display: inline-block;
+    margin-top: 10px;
+    color: #e63963;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.biblioteca-texto-favorito[hidden] {
+    display: none !important;
+}
+
+/* Campos: estado, puntuación y fechas */
+.biblioteca-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.biblioteca-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.biblioteca-campo label {
+    font-weight: 600;
+}
+
+.biblioteca-campo input,
+.biblioteca-campo select,
+.biblioteca-campo textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.biblioteca-campo-notas {
+    margin-top: 22px;
+}
+
+.biblioteca-contador {
+    text-align: right;
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
+
+.modal-biblioteca-acciones {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+/* Móviles */
+@media (max-width: 600px) {
+    .modal-biblioteca-contenido {
+        width: calc(100vw - 20px);
+        max-height: 94vh;
+        padding: 18px;
+    }
+
+    .biblioteca-form-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .biblioteca-portada-contenedor {
+        flex-basis: 105px;
+        width: 105px;
+    }
+
+    .biblioteca-portada-contenedor .biblioteca-portada,
+    .biblioteca-portada-vacia {
+        height: 155px;
+    }
+
+    .modal-biblioteca-acciones {
+        flex-direction: column-reverse;
+    }
+
+    .modal-biblioteca-acciones .boton {
+        width: 100%;
+    }
+}

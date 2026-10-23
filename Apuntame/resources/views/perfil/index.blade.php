@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Mi perfil | Apuntame')
-
+@include('biblioteca.modal')
 
 @section('content')
     @php
@@ -108,40 +108,164 @@
         <div class="perfil-columnas">
 
             {{-- COLUMNA PRINCIPAL --}}
+
+            {{-- COLUMNA PRINCIPAL: CONTENIDO INTERCAMBIABLE --}}
             <div class="perfil-principal">
 
-                {{-- BIBLIOTECA --}}
-                <section class="perfil-panel">
-                    <div class="perfil-panel-titulo">
-                        <div>
-                            <span class="perfil-mini-etiqueta">TU COLECCIÓN</span>
-                            <h2>Mi biblioteca</h2>
-                            <p>Tus contenidos favoritos, en un mismo lugar.</p>
-                        </div>
-                        <span class="perfil-panel-icono">▤</span>
-                    </div>
+                {{-- INICIO --}}
+                <section class="perfil-vista" data-vista="inicio">
 
-
-                    @if($contenidosPerfil->isNotEmpty())
-                        <section class="seccion">
-                            <div class="titulo-seccion">
-                                <h2>MI BIBLIOTECA</h2>
-                                <span>{{ $contenidosPerfil->count() }} contenidos</span>
+                    <section class="perfil-panel">
+                        <div class="perfil-panel-titulo">
+                            <div>
+                                <span class="perfil-mini-etiqueta">TU COLECCIÓN</span>
+                                <h2>Mi biblioteca</h2>
+                                <p>Tus contenidos favoritos, en un mismo lugar.</p>
                             </div>
-                            @include('contenidos._tarjetas', [ 'lista' => $contenidosPerfil ])
-                        </section>
-                    @else
-                        <div class="perfil-vacio">
-                            <p>Todavía no has agregado películas o series a tu biblioteca.</p>
-                            <a href="{{ route('contenidos.index') }}" class="boton">
-                                Explorar catálogo
-                            </a>
+                            <span class="perfil-panel-icono">▤</span>
                         </div>
-                    @endif
+
+                        @if($contenidosPerfil->isNotEmpty())
+                            <section class="seccion">
+                                <div class="titulo-seccion">
+                                    <h2>MI BIBLIOTECA</h2>
+                                    <span>{{ $contenidosPerfil->count() }} contenidos</span>
+                                </div>
+                                @include('contenidos._tarjetas', [ 'lista' => $contenidosPerfil ])
+                            </section>
+                        @else
+                            <div class="perfil-vacio">
+                                <p>Todavía no has agregado películas o series a tu biblioteca.</p>
+                                <a href="{{ route('contenidos.index') }}" class="boton">
+                                    Explorar catálogo
+                                </a>
+                            </div>
+                        @endif
+                    </section>
+
+                </section>
+
+
+                {{-- PELÍCULAS --}}
+                <section class="perfil-vista" data-vista="peliculas" hidden>
+
+                    <section class="perfil-panel">
+                        <div class="perfil-panel-titulo">
+                            <div>
+                                <span class="perfil-mini-etiqueta">TU COLECCIÓN</span>
+                                <h2>Mis películas</h2>
+                                <p>Organizadas según tu progreso personal.</p>
+                            </div>
+                            <span class="perfil-panel-icono">▣</span>
+                        </div>
+
+                        @php
+                            $estadosBiblioteca = [
+                                'pendiente' => 'Mi lista',
+                                'viendo' => 'En curso',
+                                'vista' => 'Vistas',
+                                'pausada' => 'En pausa',
+                                'abandonada' => 'Abandonadas',
+                            ];
+                        @endphp
+
+                        @if($peliculasPerfil->isNotEmpty())
+
+                            @foreach($estadosBiblioteca as $estado => $tituloEstado)
+
+                                @php
+                                    $listaEstado = $peliculasPerfil->get($estado, collect());
+                                @endphp
+
+                                @if($listaEstado->isNotEmpty())
+                                    <section class="perfil-fila-contenidos">
+                                        <div class="titulo-seccion">
+                                            <h2>{{ $tituloEstado }}</h2>
+                                            <span>{{ $listaEstado->count() }}{{ $listaEstado->count() === 1 ? 'película' : 'películas' }}</span>
+                                        </div>
+                                        @include('contenidos._tarjetas', [ 'lista' => $listaEstado ])
+                                    </section>
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="perfil-vacio">
+                                <p>Todavía no tienes películas en tu biblioteca.</p>
+                                <a href="{{ route('contenidos.index') }}" class="boton">
+                                    Explorar películas
+                                </a>
+                            </div>
+                        @endif
+                    </section>
+
+                </section>
+
+
+                {{-- SERIES --}}
+                <section class="perfil-vista" data-vista="series" hidden>
+
+                    <section class="perfil-panel">
+                        <div class="perfil-panel-titulo">
+                            <div>
+                                <span class="perfil-mini-etiqueta">TU COLECCIÓN</span>
+                                <h2>Mis series</h2>
+                                <p>Sigue tus series según tu progreso y su estado de emisión.</p>
+                            </div>
+                            <span class="perfil-panel-icono">▤</span>
+                        </div>
+
+                        @if($seriesPerfil->isNotEmpty())
+                            @foreach($estadosBiblioteca as $estado => $tituloEstado)
+                                @php
+                                    $listaEstado = $seriesPerfil->get($estado, collect());
+                                @endphp
+
+                                @if($listaEstado->isNotEmpty())
+                                    <section class="perfil-fila-contenidos">
+                                        <div class="titulo-seccion">
+                                            <h2>{{ $tituloEstado }}</h2>
+                                            <span>{{ $listaEstado->count() }} {{ $listaEstado->count() === 1 ? 'serie' : 'series' }}</span>
+                                        </div>
+                                        @include('contenidos._tarjetas', [ 'lista' => $listaEstado ])
+                                    </section>
+                                @endif
+
+                            @endforeach
+
+                        @else
+                            <div class="perfil-vacio">
+                                <p>Todavía no tienes series en tu biblioteca.</p>
+                                <a href="{{ route('contenidos.index') }}" class="boton">
+                                    Explorar series
+                                </a>
+                            </div>
+                        @endif
+                    </section>
+
+                </section>
+
+
+                {{-- SOCIAL --}}
+                <section class="perfil-vista" data-vista="social" hidden>
+
+                    <section class="perfil-panel">
+                        <div class="perfil-panel-titulo">
+                            <div>
+                                <span class="perfil-mini-etiqueta">COMUNIDAD</span>
+                                <h2>Mi espacio social</h2>
+                                <p>Muy pronto podrás conectar con otros amantes del cine y las series.</p>
+                            </div>
+                            <span class="perfil-panel-icono">♧</span>
+                        </div>
+
+                        <div class="perfil-vacio">
+                            <p>Tu espacio social estará disponible próximamente.</p>
+                        </div>
+                    </section>
 
                 </section>
 
             </div>
+
 
             {{-- COLUMNA LATERAL --}}
             <aside class="perfil-lateral">
@@ -400,6 +524,40 @@
             @if($errors->any())
             abrirModal();
             @endif
+
+            // Navegación entre las secciones del perfil
+            const pestañasPerfil = document.querySelectorAll('.perfil-tab');
+            const vistasPerfil = document.querySelectorAll('.perfil-vista');
+
+            function mostrarSeccionPerfil(seccion) {
+                const vistaDestino = Array.from(vistasPerfil).find(function (vista) {
+                    return vista.dataset.vista === seccion;
+                });
+
+                if (!vistaDestino) {
+                    return;
+                }
+
+                vistasPerfil.forEach(function (vista) {
+                    vista.hidden = vista !== vistaDestino;
+                });
+
+                pestañasPerfil.forEach(function (pestana) {
+                    const activa = pestana.dataset.seccion === seccion;
+
+                    pestana.classList.toggle('activo', activa);
+                    pestana.setAttribute('aria-selected', String(activa));
+                });
+            }
+
+            pestañasPerfil.forEach(function (pestana) {
+                pestana.addEventListener('click', function () {
+                    mostrarSeccionPerfil(pestana.dataset.seccion);
+                });
+            });
+
+            // Mostrar Inicio al cargar la página
+            mostrarSeccionPerfil('inicio');
 
         });
 

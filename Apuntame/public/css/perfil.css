@@ -222,3 +222,65 @@
     }
 }
 
+
+
+/* Ocultar las vistas inactivas aunque otros estilos usen display */
+.perfil-vista[hidden] {
+    display: none !important;
+}
+
+/* Separación entre las filas de la biblioteca */
+.perfil-fila-contenidos {
+    margin-top: 28px;
+}
+
+.perfil-fila-contenidos + .perfil-fila-contenidos {
+    padding-top: 24px;
+    border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.perfil-fila-contenidos .titulo-seccion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.perfil-fila-contenidos .titulo-seccion h2 {
+    margin: 0;
+}
+
+/* Información adicional del estado de emisión */
+.perfil-estados-emision {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.perfil-estados-emision p {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 10px 14px;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 10px;
+}
+
+.perfil-estados-emision p span {
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
+
+@media (max-width: 600px) {
+    .perfil-fila-contenidos .titulo-seccion {
+        align-items: flex-start;
+    }
+
+    .perfil-estados-emision {
+        flex-direction: column;
+    }
+}
+
