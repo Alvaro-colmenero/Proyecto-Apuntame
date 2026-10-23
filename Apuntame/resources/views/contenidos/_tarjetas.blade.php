@@ -4,7 +4,7 @@
     <p class="descripcion">No hay contenidos para mostrar.</p>
 @else
     <link rel="stylesheet" href="{{ asset('css/tarjeta.css') }}">
-    <div class="catalogo">
+    <div class="{{ !empty($modoCarrusel) && $modoCarrusel ? 'tarjetas-carrusel' : 'catalogo' }}">
         @foreach ($lista as $contenido)
             <article class="tarjeta tarjeta-con-boton">
 
@@ -62,7 +62,6 @@
                     data-fecha-fin="{{ $contenido->fecha_fin ?? '' }}"
                     data-notas="{{ $contenido->notas ?? '' }}"
                     data-favorito="{{ (int) ($contenido->favorito ?? 0) }}"
-
                 >
                     +
                 </button>

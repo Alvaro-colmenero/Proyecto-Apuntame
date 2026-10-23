@@ -4,19 +4,8 @@
 <div id="modalBiblioteca" class="modal-biblioteca" hidden>
     <div class="modal-biblioteca-fondo" data-cerrar-modal></div>
 
-    <div
-        class="modal-biblioteca-contenido"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modalBibliotecaTitulo"
-        tabindex="-1"
-    >
-        <button
-            type="button"
-            class="modal-biblioteca-cerrar"
-            data-cerrar-modal
-            aria-label="Cerrar modal"
-        >
+    <div class="modal-biblioteca-contenido" role="dialog" aria-modal="true" aria-labelledby="modalBibliotecaTitulo" tabindex="-1">
+        <button type="button" class="modal-biblioteca-cerrar" data-cerrar-modal aria-label="Cerrar modal">
             &times;
         </button>
 
@@ -26,38 +15,15 @@
         {{-- CABECERA: PÓSTER, FAVORITO E INFORMACIÓN --}}
         <div class="biblioteca-cabecera">
             <div class="biblioteca-portada-contenedor">
-                <img
-                    id="bibliotecaPortada"
-                    class="biblioteca-portada"
-                    src=""
-                    alt=""
-                    hidden
-                >
+                <img id="bibliotecaPortada" class="biblioteca-portada" src="" alt="" hidden>
 
-                <div
-                    id="bibliotecaPortadaVacia"
-                    class="biblioteca-portada-vacia"
-                    hidden
-                >
+                <div id="bibliotecaPortadaVacia" class="biblioteca-portada-vacia" hidden>
                     Sin portada
                 </div>
 
-                <button
-                    type="button"
-                    id="bibliotecaBotonFavorito"
-                    class="biblioteca-boton-favorito"
-                    aria-label="Añadir a favoritos"
-                    aria-pressed="false"
-                    title="Añadir a favoritos"
-                >
-                    <svg
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        class="biblioteca-icono-corazon"
-                    >
-                        <path
-                            d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"
-                        />
+                <button type="button" id="bibliotecaBotonFavorito" class="biblioteca-boton-favorito" aria-label="Añadir a favoritos" aria-pressed="false" title="Añadir a favoritos">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="biblioteca-icono-corazon">
+                        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>
                     </svg>
                 </button>
             </div>
@@ -67,36 +33,18 @@
                 <h2 id="modalBibliotecaTitulo">Mi biblioteca</h2>
                 <p id="modalBibliotecaNombre" class="descripcion"></p>
 
-                <span
-                    id="bibliotecaEstadoFavorito"
-                    class="biblioteca-texto-favorito"
-                    hidden
-                >
+                <span id="bibliotecaEstadoFavorito" class="biblioteca-texto-favorito" hidden>
                     ♥ En favoritos
                 </span>
             </div>
         </div>
 
         {{-- FORMULARIO --}}
-        <form
-            id="formularioBiblioteca"
-            method="POST"
-            action="{{ route('biblioteca.guardar') }}"
-        >
+        <form id="formularioBiblioteca" method="POST" action="{{ route('biblioteca.guardar') }}">
             @csrf
 
-            <input
-                type="hidden"
-                name="contenido_id"
-                id="bibliotecaContenidoId"
-            >
-
-            <input
-                type="hidden"
-                name="favorito"
-                id="bibliotecaFavorito"
-                value="0"
-            >
+            <input type="hidden" name="contenido_id" id="bibliotecaContenidoId">
+            <input type="hidden" name="favorito" id="bibliotecaFavorito" value="0">
 
             <div class="biblioteca-form-grid">
 
@@ -113,36 +61,23 @@
                 </div>
 
                 {{-- PUNTUACIÓN --}}
+
                 <div class="biblioteca-campo">
-                    <label for="bibliotecaPuntuacion">Mi puntuación</label>
-                    <select name="puntuacion" id="bibliotecaPuntuacion">
-                        <option value="">Sin puntuar</option>
-                        @for($nota = 0; $nota <= 10; $nota += 0.5)
-                            <option value="{{ number_format($nota, 1, '.', '') }}">
-                                {{ number_format($nota, 1, ',', '') }} / 10
-                            </option>
-                        @endfor
-                    </select>
+                    <label for="bibliotecaPuntuacion">Puntuación (0-10)</label>
+                    <input type="number" name="puntuacion" id="bibliotecaPuntuacion" min="0" max="10" step="0.1" placeholder="Ej. 8.5">
                 </div>
+
 
                 {{-- FECHA DE INICIO --}}
                 <div class="biblioteca-campo">
                     <label for="bibliotecaFechaInicio">Fecha de inicio</label>
-                    <input
-                        type="date"
-                        name="fecha_inicio"
-                        id="bibliotecaFechaInicio"
-                    >
+                    <input type="date" name="fecha_inicio" id="bibliotecaFechaInicio">
                 </div>
 
                 {{-- FECHA DE FIN --}}
                 <div class="biblioteca-campo">
                     <label for="bibliotecaFechaFin">Fecha de finalización</label>
-                    <input
-                        type="date"
-                        name="fecha_fin"
-                        id="bibliotecaFechaFin"
-                    >
+                    <input type="date" name="fecha_fin" id="bibliotecaFechaFin">
                 </div>
 
             </div>
@@ -150,13 +85,7 @@
             {{-- NOTAS --}}
             <div class="biblioteca-campo biblioteca-campo-notas">
                 <label for="bibliotecaNotas">Mis notas personales</label>
-                <textarea
-                    name="notas"
-                    id="bibliotecaNotas"
-                    rows="4"
-                    maxlength="5000"
-                    placeholder="¿Qué te parece? ¿Por qué quieres verla? ¿En qué episodio te quedaste?"
-                ></textarea>
+                <textarea name="notas" id="bibliotecaNotas" rows="4" maxlength="5000" placeholder="¿Qué te parece? ¿Por qué quieres verla? ¿En qué episodio te quedaste?"></textarea>
 
                 <div class="biblioteca-contador">
                     <span id="bibliotecaCaracteres">0</span>/5000 caracteres
@@ -165,11 +94,7 @@
 
             {{-- BOTONES --}}
             <div class="modal-biblioteca-acciones">
-                <button
-                    type="button"
-                    class="boton boton-secundario"
-                    data-cerrar-modal
-                >
+                <button type="button" class="boton boton-secundario" data-cerrar-modal>
                     Cancelar
                 </button>
 

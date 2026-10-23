@@ -133,3 +133,150 @@ select:focus {outline: 2px solid #25bfd0;outline-offset: 2px;}
     .auth-nav {gap: 7px;}
     .nav-auth-link {padding: 9px 11px;font-size: 12px;}
 }
+
+.seccion-tendencias {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.subtitulo-tendencias {
+    margin: 5px 0 0;
+    color: var(--color-texto-secundario, #aaa);
+    font-size: 0.9rem;
+}
+
+.controles-tendencias {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.flecha-tendencias {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50%;
+    background: #252525;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.flecha-tendencias:hover {
+    background: #e63963;
+    transform: scale(1.06);
+}
+
+.flecha-tendencias:disabled {
+    opacity: 0.35;
+    cursor: default;
+    transform: none;
+}
+
+/* Zona desplazable */
+.carrusel-tendencias {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    outline-offset: 4px;
+}
+
+.carrusel-tendencias::-webkit-scrollbar {
+    display: none;
+}
+
+/*
+ * El partial debe poner la clase
+ * .tarjetas-carrusel en el contenedor
+ * que envuelve las tarjetas.
+ */
+.carrusel-tendencias-pista .tarjetas-carrusel {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 18px;
+    width: max-content;
+    min-width: 100%;
+    padding: 8px 2px 16px;
+    box-sizing: border-box;
+}
+
+/* Cada tarjeta conserva su diseño */
+.carrusel-tendencias-pista .tarjetas-carrusel > * {
+    flex: 0 0 190px;
+    width: 190px;
+    min-width: 0;
+    scroll-snap-align: start;
+}
+
+/* Evita que la cuadrícula original limite el carrusel */
+.carrusel-tendencias-pista .tarjetas-carrusel .tarjeta {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Puntos de navegación */
+.indicadores-tendencias {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    min-height: 18px;
+    margin-top: 5px;
+}
+
+.indicador-tendencias {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #777;
+    cursor: pointer;
+    transition:
+        width 0.2s ease,
+        background 0.2s ease;
+}
+
+.indicador-tendencias.activo {
+    width: 21px;
+    border-radius: 5px;
+    background: #e63963;
+}
+
+@media (max-width: 600px) {
+    .controles-tendencias {
+        gap: 5px;
+    }
+
+    .flecha-tendencias {
+        width: 33px;
+        height: 33px;
+    }
+
+    .carrusel-tendencias-pista .tarjetas-carrusel {
+        gap: 12px;
+    }
+
+    .carrusel-tendencias-pista .tarjetas-carrusel > * {
+        flex-basis: 155px;
+        width: 155px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carrusel-tendencias {
+        scroll-behavior: auto;
+    }
+}
+

@@ -37,9 +37,16 @@
                         data-id="{{ $contenido->id }}"
                         data-titulo="{{ $contenido->titulo }}"
                         data-tipo="{{ $contenido->tipo }}"
-                        data-estado="{{ $estadoBiblioteca ?? 'pendiente' }}"
                         data-portada="{{ $contenido->poster ? asset($contenido->poster) : '' }}"
                         data-banner="{{ $contenido->banner ? asset($contenido->banner) : '' }}"
+                        title="Añadir a mi lista"
+                        aria-label="Añadir {{ $contenido->titulo }} a mi lista"
+                        data-estado="{{ $contenido->estado_usuario ?? $contenido->estado ?? 'pendiente' }}"
+                        data-puntuacion="{{ $contenido->puntuacion ?? '' }}"
+                        data-fecha-inicio="{{ $contenido->fecha_inicio ?? '' }}"
+                        data-fecha-fin="{{ $contenido->fecha_fin ?? '' }}"
+                        data-notas="{{ $contenido->notas ?? '' }}"
+                        data-favorito="{{ (int) ($contenido->favorito ?? 0) }}"
                 >
                     + Añadir a mi lista
                 </button>

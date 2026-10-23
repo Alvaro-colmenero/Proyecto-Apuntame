@@ -1,9 +1,12 @@
-
+/* Ocultar elementos con hidden */
 .modal-biblioteca[hidden],
-.biblioteca-portada[hidden] {
+.biblioteca-portada[hidden],
+.biblioteca-portada-vacia[hidden],
+.biblioteca-texto-favorito[hidden] {
     display: none !important;
 }
 
+/* Fondo y contenedor exterior */
 .modal-biblioteca {
     position: fixed;
     inset: 0;
@@ -11,220 +14,154 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 .modal-biblioteca-fondo {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, .8);
+    background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(4px);
 }
 
+/* Ventana principal */
 .modal-biblioteca-contenido {
     position: relative;
-    width: 100%;
-    max-width: 520px;
-    max-height: 90vh;
+    z-index: 1;
+    width: min(760px, calc(100vw - 32px));
+    max-width: 760px;
+    max-height: 88vh;
+    overflow-x: hidden;
     overflow-y: auto;
-    border-radius: 14px;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+    padding: 0;
+    border-radius: 12px;
     background: var(--color-tarjeta, #202020);
     color: var(--color-texto, #fff);
-    box-shadow: 0 12px 45px rgba(0, 0, 0, .5);
+    box-shadow: 0 12px 45px rgba(0, 0, 0, 0.5);
 }
 
+/* Botón para cerrar */
 .modal-biblioteca-cerrar {
     position: absolute;
     z-index: 3;
-    top: 10px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
+    top: 9px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
     border: 0;
     border-radius: 50%;
-    background: rgba(0, 0, 0, .7);
-    color: white;
-    font-size: 27px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-size: 25px;
+    line-height: 1;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
+.modal-biblioteca-cerrar:hover {
+    background: rgba(0, 0, 0, 0.95);
+    transform: scale(1.05);
+}
+
+/* =========================================
+   BANNER SUPERIOR
+   ========================================= */
+
 .biblioteca-banner {
-    height: 155px;
-    background-color: #333;
-    background-position: center;
-    background-size: cover;
     position: relative;
+    height: 115px;
+    overflow: hidden;
+    background-color: #333;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 12px 12px 0 0;
 }
 
 .biblioteca-banner::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, #202020, transparent);
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.08) 0%,
+        rgba(32, 32, 32, 0.12) 35%,
+        #202020 100%
+    );
+    pointer-events: none;
 }
+
+/* =========================================
+   CABECERA: PÓSTER Y TÍTULO
+   ========================================= */
 
 .biblioteca-cabecera {
     position: relative;
+    z-index: 1;
     display: flex;
     align-items: flex-end;
-    gap: 16px;
-    padding: 0 22px 20px;
-    margin-top: -55px;
-    z-index: 1;
+    gap: 14px;
+    padding: 0 20px 12px;
+    margin-top: -42px;
 }
 
-.biblioteca-portada {
-    width: 105px;
-    height: 155px;
-    flex-shrink: 0;
-    object-fit: cover;
-    border-radius: 7px;
-    box-shadow: 0 5px 18px rgba(0, 0, 0, .5);
-    background: #333;
-}
-
-.biblioteca-cabecera-texto {
-    min-width: 0;
-    padding-bottom: 4px;
-}
-
-.biblioteca-cabecera-texto h2 {
-    overflow-wrap: anywhere;
-    margin: 8px 0;
-}
-
-.modal-biblioteca-contenido form {
-    display: grid;
-    gap: 10px;
-    padding: 0 22px 22px;
-}
-
-.modal-biblioteca-contenido input,
-.modal-biblioteca-contenido select,
-.modal-biblioteca-contenido textarea {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 11px;
-    border: 1px solid #555;
-    border-radius: 7px;
-    background: #292929;
-    color: white;
-    font: inherit;
-}
-
-.modal-biblioteca-contenido textarea {
-    resize: vertical;
-}
-
-.biblioteca-contador {
-    margin-top: -6px;
-    text-align: right;
-    font-size: 12px;
-    color: #aaa;
-}
-
-.modal-biblioteca-acciones {
-    display: flex;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-@media (max-width: 480px) {
-    .biblioteca-banner {
-        height: 120px;
-    }
-
-    .biblioteca-portada {
-        width: 85px;
-        height: 125px;
-    }
-
-    .biblioteca-cabecera {
-        gap: 12px;
-        padding-inline: 15px;
-    }
-
-    .modal-biblioteca-contenido form {
-        padding-inline: 15px;
-    }
-}
-
-
-/* El atributo hidden siempre debe ocultar el modal */
-.modal-biblioteca[hidden] {
-    display: none !important;
-}
-
-/* Modal más ancho */
-.modal-biblioteca-contenido {
-    width: min(900px, calc(100vw - 36px));
-    max-width: 900px;
-    max-height: 92vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-sizing: border-box;
-    padding: 30px;
-    overscroll-behavior: contain;
-}
-
-/* Banner superior */
-.biblioteca-banner {
-    background-size: cover;
-    background-position: center;
-    border-radius: 12px;
-}
-
-/* Póster y botón de favoritos */
 .biblioteca-portada-contenedor {
     position: relative;
-    flex: 0 0 145px;
-    width: 145px;
+    flex: 0 0 100px;
+    width: 100px;
+    min-width: 0;
     align-self: flex-start;
 }
 
 .biblioteca-portada-contenedor .biblioteca-portada {
     display: block;
     width: 100%;
-    height: 215px;
+    height: 145px;
     object-fit: cover;
-    border-radius: 10px;
-}
-
-.biblioteca-portada-contenedor .biblioteca-portada[hidden],
-.biblioteca-portada-vacia[hidden] {
-    display: none !important;
+    object-position: center;
+    border-radius: 8px;
+    background: #333;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.5);
 }
 
 .biblioteca-portada-vacia {
     display: grid;
     place-items: center;
     width: 100%;
-    height: 215px;
-    padding: 10px;
+    height: 145px;
+    padding: 8px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(128, 128, 128, 0.15);
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
 }
 
+/* Botón de favoritos */
 .biblioteca-boton-favorito {
     position: absolute;
-    right: 8px;
-    bottom: 8px;
+    right: 6px;
+    bottom: 6px;
     display: grid;
     place-items: center;
-    width: 42px;
-    height: 42px;
-    padding: 9px;
+    width: 36px;
+    height: 36px;
+    padding: 7px;
     border: 0;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.72);
-    color: white;
+    background: rgba(0, 0, 0, 0.78);
+    color: #fff;
     cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
 .biblioteca-boton-favorito:hover {
@@ -232,8 +169,9 @@
 }
 
 .biblioteca-icono-corazon {
-    width: 23px;
-    height: 23px;
+    display: block;
+    width: 21px;
+    height: 21px;
     fill: transparent;
     stroke: currentColor;
     stroke-width: 1.8;
@@ -251,92 +189,297 @@
     stroke: #e63963;
 }
 
+/* Título y tipo de contenido */
+.biblioteca-cabecera-texto {
+    flex: 1;
+    min-width: 0;
+    padding-bottom: 3px;
+}
+
+.biblioteca-cabecera-texto h2 {
+    margin: 5px 0;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.biblioteca-cabecera-texto p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
 .biblioteca-texto-favorito {
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 7px;
     color: #e63963;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
 }
 
-.biblioteca-texto-favorito[hidden] {
-    display: none !important;
+/* =========================================
+   FORMULARIO
+   ========================================= */
+
+.modal-biblioteca-contenido form {
+    display: grid;
+    gap: 8px;
+    padding: 0 20px 18px;
+    box-sizing: border-box;
 }
 
-/* Campos: estado, puntuación y fechas */
 .biblioteca-form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-    margin-top: 24px;
+    gap: 12px;
+    margin-top: 10px;
 }
 
 .biblioteca-campo {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
     min-width: 0;
 }
 
 .biblioteca-campo label {
+    font-size: 0.9rem;
     font-weight: 600;
 }
 
-.biblioteca-campo input,
-.biblioteca-campo select,
-.biblioteca-campo textarea {
+/* Inputs, listas desplegables y notas */
+.modal-biblioteca-contenido input,
+.modal-biblioteca-contenido select,
+.modal-biblioteca-contenido textarea {
+    display: block;
     width: 100%;
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
+    padding: 9px 10px;
+    border: 1px solid #555;
+    border-radius: 7px;
+    background: #292929;
+    color: #fff;
+    font: inherit;
+    font-size: 0.9rem;
+}
+
+.modal-biblioteca-contenido input:focus,
+.modal-biblioteca-contenido select:focus,
+.modal-biblioteca-contenido textarea:focus {
+    outline: 2px solid rgba(230, 57, 99, 0.75);
+    outline-offset: 1px;
+    border-color: #e63963;
+}
+
+.modal-biblioteca-contenido select {
+    cursor: pointer;
+}
+
+.modal-biblioteca-contenido input[type="date"] {
+    min-height: 38px;
+}
+
+.modal-biblioteca-contenido textarea {
+    min-height: 65px;
+    resize: vertical;
 }
 
 .biblioteca-campo-notas {
-    margin-top: 22px;
+    margin-top: 10px;
 }
 
 .biblioteca-contador {
+    margin-top: -3px;
+    color: #aaa;
+    font-size: 0.78rem;
     text-align: right;
-    font-size: 0.85rem;
-    opacity: 0.75;
 }
+
+/* Texto de favorito */
+.biblioteca-texto-favorito {
+    line-height: 1.3;
+}
+
+/* =========================================
+   BOTONES DE ACCIÓN
+   ========================================= */
 
 .modal-biblioteca-acciones {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 22px;
+    gap: 8px;
+    margin-top: 12px;
 }
 
-/* Móviles */
-@media (max-width: 600px) {
+.modal-biblioteca-acciones .boton {
+    cursor: pointer;
+}
+
+/* =========================================
+   PANTALLAS DE ALTURA REDUCIDA
+   ========================================= */
+
+@media (max-height: 800px) {
     .modal-biblioteca-contenido {
-        width: calc(100vw - 20px);
-        max-height: 94vh;
-        padding: 18px;
+        max-height: 86vh;
     }
 
-    .biblioteca-form-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
+    .biblioteca-banner {
+        height: 90px;
     }
 
-    .biblioteca-portada-contenedor {
-        flex-basis: 105px;
-        width: 105px;
+    .biblioteca-cabecera {
+        margin-top: -35px;
+        padding-bottom: 8px;
     }
 
     .biblioteca-portada-contenedor .biblioteca-portada,
     .biblioteca-portada-vacia {
-        height: 155px;
+        height: 125px;
+    }
+
+    .biblioteca-form-grid {
+        margin-top: 7px;
+        gap: 9px;
+    }
+
+    .biblioteca-campo-notas {
+        margin-top: 7px;
+    }
+
+    .modal-biblioteca-contenido textarea {
+        min-height: 52px;
+    }
+
+    .modal-biblioteca-acciones {
+        margin-top: 8px;
+    }
+}
+
+/* =========================================
+   MÓVILES
+   ========================================= */
+
+@media (max-width: 600px) {
+    .modal-biblioteca {
+        padding: 10px;
+    }
+
+    .modal-biblioteca-contenido {
+        width: calc(100vw - 20px);
+        max-width: none;
+        max-height: 92vh;
+        border-radius: 10px;
+    }
+
+    .biblioteca-banner {
+        height: 95px;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .biblioteca-cabecera {
+        gap: 12px;
+        padding: 0 14px 10px;
+        margin-top: -35px;
+    }
+
+    .biblioteca-portada-contenedor {
+        flex-basis: 82px;
+        width: 82px;
+    }
+
+    .biblioteca-portada-contenedor .biblioteca-portada,
+    .biblioteca-portada-vacia {
+        height: 120px;
+    }
+
+    .biblioteca-boton-favorito {
+        width: 32px;
+        height: 32px;
+        padding: 6px;
+    }
+
+    .biblioteca-icono-corazon {
+        width: 19px;
+        height: 19px;
+    }
+
+    .biblioteca-cabecera-texto h2 {
+        font-size: 1.05rem;
+    }
+
+    .biblioteca-cabecera-texto p {
+        font-size: 0.82rem;
+    }
+
+    .modal-biblioteca-contenido form {
+        padding: 0 14px 14px;
+    }
+
+    .biblioteca-form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .biblioteca-campo-notas {
+        margin-top: 8px;
+    }
+
+    .modal-biblioteca-contenido textarea {
+        min-height: 55px;
     }
 
     .modal-biblioteca-acciones {
         flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 8px;
+        margin-top: 10px;
     }
 
     .modal-biblioteca-acciones .boton {
         width: 100%;
+    }
+}
+
+/* Móviles con poca altura */
+@media (max-width: 600px) and (max-height: 700px) {
+    .modal-biblioteca-contenido {
+        max-height: 94vh;
+    }
+
+    .biblioteca-banner {
+        height: 75px;
+    }
+
+    .biblioteca-cabecera {
+        margin-top: -28px;
+        padding-bottom: 7px;
+    }
+
+    .biblioteca-portada-contenedor .biblioteca-portada,
+    .biblioteca-portada-vacia {
+        height: 100px;
+    }
+
+    .modal-biblioteca-contenido form {
+        gap: 6px;
+        padding-bottom: 10px;
+    }
+
+    .biblioteca-form-grid {
+        gap: 7px;
+    }
+
+    .biblioteca-campo-notas {
+        margin-top: 5px;
+    }
+
+    .modal-biblioteca-contenido textarea {
+        min-height: 45px;
     }
 }
