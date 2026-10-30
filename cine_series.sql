@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-10-2026 a las 14:20:18
+-- Tiempo de generación: 30-10-2026 a las 13:48:20
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -34,7 +34,7 @@ CREATE TABLE `amistades` (
   `estado` enum('pendiente','aceptada','rechazada') NOT NULL DEFAULT 'pendiente',
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_respuesta` datetime DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -49,8 +49,35 @@ CREATE TABLE `biblioteca` (
   `puntuacion` decimal(3,1) DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
-  `notas` text DEFAULT NULL
-) ;
+  `notas` text DEFAULT NULL,
+  `favorito` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `biblioteca`
+--
+
+INSERT INTO `biblioteca` (`usuario_id`, `contenido_id`, `estado`, `puntuacion`, `fecha_inicio`, `fecha_fin`, `notas`, `favorito`) VALUES
+(5, 1, 'pendiente', NULL, NULL, NULL, NULL, 1),
+(5, 2, '', NULL, NULL, NULL, NULL, 0),
+(5, 3, 'vista', NULL, NULL, NULL, NULL, 0),
+(5, 4, 'pausada', NULL, NULL, NULL, NULL, 0),
+(5, 5, 'pendiente', NULL, NULL, NULL, NULL, 1),
+(5, 10, 'pendiente', NULL, NULL, NULL, NULL, 1),
+(5, 21, 'abandonada', NULL, NULL, NULL, NULL, 0),
+(5, 26, 'vista', NULL, NULL, NULL, NULL, 0),
+(5, 30, 'viendo', NULL, NULL, NULL, NULL, 0),
+(5, 34, 'abandonada', NULL, NULL, NULL, NULL, 1),
+(5, 35, 'pendiente', NULL, NULL, NULL, NULL, 1),
+(5, 37, 'pausada', NULL, NULL, NULL, NULL, 1),
+(5, 52, 'pendiente', NULL, NULL, NULL, NULL, 0),
+(5, 54, 'pendiente', NULL, NULL, NULL, NULL, 0),
+(5, 55, 'pendiente', NULL, NULL, NULL, NULL, 1),
+(5, 57, 'pendiente', NULL, NULL, NULL, NULL, 0),
+(5, 65, 'vista', NULL, NULL, NULL, NULL, 0),
+(5, 69, 'pausada', NULL, NULL, NULL, NULL, 0),
+(5, 73, 'viendo', NULL, NULL, NULL, NULL, 0),
+(6, 18, 'pausada', NULL, NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -69,7 +96,7 @@ CREATE TABLE `contenidos` (
   `banner` varchar(150) DEFAULT NULL,
   `estado_serie` enum('en_emision','finalizada','cancelada','desconocido') NOT NULL DEFAULT 'desconocido',
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `contenidos`
@@ -240,7 +267,132 @@ INSERT INTO `contenidos_generos` (`contenido_id`, `genero_id`) VALUES
 (31, 8),
 (32, 1),
 (32, 7),
-(32, 15);
+(32, 15),
+(33, 1),
+(33, 2),
+(33, 8),
+(34, 2),
+(34, 3),
+(34, 4),
+(35, 1),
+(35, 2),
+(35, 8),
+(36, 2),
+(36, 4),
+(36, 7),
+(37, 1),
+(37, 4),
+(37, 20),
+(38, 1),
+(38, 4),
+(38, 20),
+(39, 1),
+(39, 4),
+(39, 20),
+(40, 1),
+(40, 7),
+(40, 8),
+(41, 1),
+(41, 2),
+(41, 8),
+(42, 1),
+(42, 2),
+(42, 8),
+(43, 1),
+(43, 2),
+(43, 8),
+(44, 3),
+(44, 5),
+(44, 8),
+(45, 3),
+(45, 5),
+(45, 7),
+(46, 3),
+(46, 5),
+(46, 8),
+(47, 2),
+(47, 4),
+(47, 8),
+(48, 2),
+(48, 4),
+(48, 8),
+(49, 7),
+(49, 9),
+(49, 20),
+(50, 1),
+(50, 4),
+(50, 20),
+(51, 4),
+(51, 8),
+(51, 9),
+(52, 7),
+(52, 10),
+(53, 1),
+(53, 2),
+(53, 3),
+(54, 1),
+(54, 8),
+(54, 12),
+(55, 1),
+(55, 4),
+(55, 20),
+(56, 2),
+(56, 4),
+(56, 9),
+(57, 4),
+(57, 7),
+(57, 20),
+(58, 1),
+(58, 2),
+(58, 3),
+(59, 4),
+(59, 7),
+(59, 9),
+(60, 4),
+(60, 9),
+(60, 20),
+(61, 1),
+(61, 2),
+(61, 4),
+(62, 1),
+(62, 7),
+(62, 20),
+(63, 1),
+(63, 7),
+(63, 20),
+(64, 1),
+(64, 7),
+(64, 20),
+(65, 1),
+(65, 7),
+(65, 20),
+(66, 4),
+(66, 9),
+(66, 20),
+(67, 5),
+(67, 7),
+(68, 7),
+(68, 20),
+(69, 7),
+(69, 10),
+(70, 1),
+(70, 2),
+(70, 3),
+(71, 4),
+(71, 8),
+(71, 12),
+(72, 2),
+(72, 3),
+(72, 8),
+(73, 7),
+(73, 9),
+(73, 20),
+(74, 1),
+(74, 2),
+(74, 7),
+(75, 4),
+(75, 9),
+(75, 20);
 
 -- --------------------------------------------------------
 
@@ -256,7 +408,7 @@ CREATE TABLE `episodios` (
   `descripcion` text DEFAULT NULL,
   `duracion` int(11) DEFAULT NULL,
   `fecha_estreno` date DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `episodios`
@@ -340,7 +492,7 @@ CREATE TABLE `temporadas` (
   `titulo` varchar(150) DEFAULT NULL,
   `descripcion` text DEFAULT NULL,
   `fecha_estreno` date DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `temporadas`
@@ -467,13 +619,13 @@ ALTER TABLE `amistades`
 -- AUTO_INCREMENT de la tabla `contenidos`
 --
 ALTER TABLE `contenidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT de la tabla `episodios`
 --
 ALTER TABLE `episodios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `generos`
@@ -485,7 +637,7 @@ ALTER TABLE `generos`
 -- AUTO_INCREMENT de la tabla `temporadas`
 --
 ALTER TABLE `temporadas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
