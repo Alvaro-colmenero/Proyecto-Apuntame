@@ -81,6 +81,11 @@
             </button>
 
             <button type="button" class="perfil-tab"
+                    data-seccion="estadisticas" aria-selected="false">
+                <span>▥</span> Estadísticas
+            </button>
+
+            <button type="button" class="perfil-tab"
                     data-seccion="social" aria-selected="false">
                 <span>♧</span> Social
             </button>
@@ -148,99 +153,97 @@
 
                 {{-- PELÍCULAS --}}
                 <section class="perfil-vista" data-vista="peliculas" hidden>
-
                     <section class="perfil-panel">
+
                         <div class="perfil-panel-titulo">
                             <div>
                                 <span class="perfil-mini-etiqueta">TU COLECCIÓN</span>
                                 <h2>Mis películas</h2>
-                                <p>Organizadas según tu progreso personal.</p>
+                                <p>Organiza tu progreso personal.</p>
                             </div>
-                            <span class="perfil-panel-icono">▣</span>
+
                         </div>
 
-                        @php
-                            $estadosBiblioteca = [
-                                'pendiente' => 'Mi lista',
-                                'viendo' => 'En curso',
-                                'vista' => 'Vistas',
-                                'pausada' => 'En pausa',
-                                'abandonada' => 'Abandonadas',
-                            ];
-                        @endphp
-
-                        @if($peliculasPerfil->isNotEmpty())
-
-                            @foreach($estadosBiblioteca as $estado => $tituloEstado)
-
-                                @php
-                                    $listaEstado = $peliculasPerfil->get($estado, collect());
-                                @endphp
-
-                                @if($listaEstado->isNotEmpty())
-                                    <section class="perfil-fila-contenidos">
-                                        <div class="titulo-seccion">
-                                            <h2>{{ $tituloEstado }}</h2>
-                                            <span>{{ $listaEstado->count() }}{{ $listaEstado->count() === 1 ? 'película' : 'películas' }}</span>
-                                        </div>
-                                        @include('contenidos._tarjetas', [ 'lista' => $listaEstado ])
-                                    </section>
+                        <div class="perfil-biblioteca-layout">
+                            @include('biblioteca.filtros', [ 'tipo' => 'pelicula', 'contenidos' => $peliculasPerfil ])
+                            <div class="perfil-biblioteca-resultados">
+                                @if($peliculasPerfil->isNotEmpty())
+                                    @foreach($estadosBiblioteca as $estado => $tituloEstado)
+                                        @php
+                                            $listaEstado = $peliculasPerfil->get($estado, collect());
+                                        @endphp
+                                        @if($listaEstado->isNotEmpty())
+                                            <section class="perfil-fila-contenidos" data-grupo-estado="{{ $estado }}">
+                                                <div class="titulo-seccion">
+                                                    <h2>{{ $tituloEstado }}</h2>
+                                                    <span>{{ $listaEstado->count() }} películas</span>
+                                                </div>
+                                                @include('contenidos._tarjetas', [ 'lista' => $listaEstado ])
+                                            </section>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <div class="perfil-vacio">
+                                        <p>Todavía no tienes películas en tu biblioteca.</p>
+                                        <a href="{{ route('contenidos.index') }}" class="boton">
+                                            Explorar películas
+                                        </a>
+                                    </div>
                                 @endif
-                            @endforeach
-                        @else
-                            <div class="perfil-vacio">
-                                <p>Todavía no tienes películas en tu biblioteca.</p>
-                                <a href="{{ route('contenidos.index') }}" class="boton">
-                                    Explorar películas
-                                </a>
-                            </div>
-                        @endif
-                    </section>
+                                <p class="perfil-filtro-sin-resultados" hidden>
+                                    No se encontraron películas con esos filtros.
+                                </p>
 
+                            </div>
+                        </div>
+                    </section>
                 </section>
 
 
                 {{-- SERIES --}}
                 <section class="perfil-vista" data-vista="series" hidden>
-
                     <section class="perfil-panel">
+
                         <div class="perfil-panel-titulo">
                             <div>
                                 <span class="perfil-mini-etiqueta">TU COLECCIÓN</span>
                                 <h2>Mis series</h2>
-                                <p>Sigue tus series según tu progreso y su estado de emisión.</p>
+                                <p>Sigue tus series.</p>
                             </div>
-                            <span class="perfil-panel-icono">▤</span>
                         </div>
 
-                        @if($seriesPerfil->isNotEmpty())
-                            @foreach($estadosBiblioteca as $estado => $tituloEstado)
-                                @php
-                                    $listaEstado = $seriesPerfil->get($estado, collect());
-                                @endphp
-
-                                @if($listaEstado->isNotEmpty())
-                                    <section class="perfil-fila-contenidos">
-                                        <div class="titulo-seccion">
-                                            <h2>{{ $tituloEstado }}</h2>
-                                            <span>{{ $listaEstado->count() }} {{ $listaEstado->count() === 1 ? 'serie' : 'series' }}</span>
-                                        </div>
-                                        @include('contenidos._tarjetas', [ 'lista' => $listaEstado ])
-                                    </section>
+                        <div class="perfil-biblioteca-layout">
+                            @include('biblioteca.filtros', [ 'tipo' => 'serie', 'contenidos' => $seriesPerfil ])
+                            <div class="perfil-biblioteca-resultados">
+                                @if($seriesPerfil->isNotEmpty())
+                                    @foreach($estadosBiblioteca as $estado => $tituloEstado)
+                                        @php
+                                            $listaEstado = $seriesPerfil->get($estado, collect());
+                                        @endphp
+                                        @if($listaEstado->isNotEmpty())
+                                            <section class="perfil-fila-contenidos" data-grupo-estado="{{ $estado }}">
+                                                <div class="titulo-seccion">
+                                                    <h2>{{ $tituloEstado }}</h2>
+                                                    <span>{{ $listaEstado->count() }} series</span>
+                                                </div>
+                                                @include('contenidos._tarjetas', [ 'lista' => $listaEstado ])
+                                            </section>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <div class="perfil-vacio">
+                                        <p>Todavía no tienes series en tu biblioteca.</p>
+                                        <a href="{{ route('contenidos.index') }}" class="boton">
+                                            Explorar series
+                                        </a>
+                                    </div>
                                 @endif
-
-                            @endforeach
-
-                        @else
-                            <div class="perfil-vacio">
-                                <p>Todavía no tienes series en tu biblioteca.</p>
-                                <a href="{{ route('contenidos.index') }}" class="boton">
-                                    Explorar series
-                                </a>
+                                <p class="perfil-filtro-sin-resultados" hidden>
+                                    No se encontraron series con esos filtros.
+                                </p>
                             </div>
-                        @endif
+                        </div>
                     </section>
-
                 </section>
 
 
@@ -270,7 +273,7 @@
             {{-- COLUMNA LATERAL --}}
             <aside class="perfil-lateral">
 
-                <section class="perfil-panel perfil-cuenta">
+                <section class="perfil-panel perfil-cuenta" id="perfil-cuenta">
                     <span class="perfil-mini-etiqueta">TU CUENTA</span>
                     <h2>Información personal</h2>
 
@@ -292,31 +295,34 @@
                     </div>
                 </section>
 
-                <section class="perfil-panel perfil-actividad">
-                    <span class="perfil-mini-etiqueta">ÚLTIMOS MOVIMIENTOS</span>
-                    <h2>Actividad reciente</h2>
+                <section class="perfil-panel perfil-favoritos" id="perfil-actividad">
+                    <span class="perfil-mini-etiqueta">TU SELECCIÓN PERSONAL</span>
+                    <h2>Mis favoritos</h2>
+                    @if(isset($favoritosPerfil) && $favoritosPerfil->isNotEmpty())
+                        <div class="perfil-favoritos-lista">
+                            @foreach($favoritosPerfil as $favorito)
+                                <div class="perfil-favorito-item">
 
-                    @if($actividadPerfil->isNotEmpty())
-                        @foreach($actividadPerfil as $actividad)
-                            <div class="perfil-actividad-item">
-                                <span class="perfil-actividad-punto"></span>
-                                <div>
-                                    <strong>
-                                        {{ $actividad->descripcion ?? $actividad->titulo ?? 'Actividad' }}
-                                    </strong>
+                                    <img src="{{ $favorito->poster }}" alt="{{ $favorito->titulo }}" class="perfil-favorito-poster">
 
-                                    @if(!empty($actividad->created_at))
+                                    <div class="perfil-favorito-info">
+                                        <strong>{{ $favorito->titulo }}</strong>
                                         <small>
-                                            {{ \Carbon\Carbon::parse($actividad->created_at)->diffForHumans() }}
+                                            {{ $favorito->tipo === 'pelicula' ? 'Película' : 'Serie' }}
+                                            @if(!empty($favorito->fecha_estreno))
+                                                · {{ substr($favorito->fecha_estreno, 0, 4) }}
+                                            @endif
                                         </small>
-                                    @endif
+                                    </div>
+
+                                    <span class="perfil-favorito-corazon">♥</span>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
                     @else
                         <div class="perfil-actividad-vacia">
-                            <span>◷</span>
-                            <p>Aquí aparecerá tu actividad cuando empieces a utilizar tu biblioteca.</p>
+                            <span>♥</span>
+                            <p>Todavía no tienes favoritos. Marca tus películas y series preferidas con el corazón.</p>
                         </div>
                     @endif
                 </section>
@@ -534,20 +540,34 @@
                     return vista.dataset.vista === seccion;
                 });
 
-                if (!vistaDestino) {
-                    return;
-                }
+                if (!vistaDestino) {return;}
 
+                const esInicio = seccion === 'inicio';
+
+                // Cambiar contenido visible
                 vistasPerfil.forEach(function (vista) {
                     vista.hidden = vista !== vistaDestino;
                 });
 
+                // Actualizar pestañas
                 pestañasPerfil.forEach(function (pestana) {
                     const activa = pestana.dataset.seccion === seccion;
 
                     pestana.classList.toggle('activo', activa);
                     pestana.setAttribute('aria-selected', String(activa));
                 });
+
+                // Obtener bloques laterales
+                const columnasPerfil = document.querySelector('.perfil-columnas');
+                const bloqueCuenta = document.getElementById('perfil-cuenta');
+                const bloqueActividad = document.getElementById('perfil-actividad');
+
+                // Mostrar únicamente en Inicio
+                bloqueCuenta.hidden = !esInicio;
+                bloqueActividad.hidden = !esInicio;
+
+                // Adaptar el ancho del contenido
+                columnasPerfil.classList.toggle('perfil-sin-cuenta', !esInicio);
             }
 
             pestañasPerfil.forEach(function (pestana) {
@@ -561,7 +581,70 @@
 
         });
 
+        document.querySelectorAll('[data-filtros-biblioteca]').forEach(filtros => {
 
+            const tipo = filtros.dataset.filtrosBiblioteca;
+            const vista = document.querySelector(`.perfil-vista[data-vista="${tipo === 'pelicula' ? 'peliculas' : 'series'}"]`);
+
+            if (!vista) return;
+            const buscador = filtros.querySelector('[data-filtro-busqueda]');
+            const estados = filtros.querySelectorAll('[data-filtro-estado]');
+            const generos = filtros.querySelectorAll('[data-filtro-genero]');
+            const limpiar = filtros.querySelector('[data-limpiar-filtros]');
+            const tarjetas = vista.querySelectorAll('.tarjeta');
+            const mensajeVacio = vista.querySelector('.perfil-filtro-sin-resultados');
+
+            function aplicarFiltros() {
+
+                const texto = buscador.value.trim().toLocaleLowerCase('es');
+                const estadoSeleccionado = filtros.querySelector('[data-filtro-estado]:checked').value;
+                const generosSeleccionados = Array.from(generos).filter(g => g.checked).map(g => g.value.toLocaleLowerCase('es'));
+
+                let resultados = 0;
+
+                tarjetas.forEach(tarjeta => {
+
+                    const titulo = (tarjeta.dataset.contenidoTitulo || '').toLocaleLowerCase('es');
+                    const estado = tarjeta.dataset.contenidoEstado;
+
+                    const listaGeneros = (tarjeta.dataset.contenidoGeneros || '')
+                        .split('|')
+                        .map(g => g.trim().toLocaleLowerCase('es'));
+
+                    const coincideTexto = titulo.includes(texto);
+                    const coincideEstado = estadoSeleccionado === 'todos' || estado === estadoSeleccionado;
+                    const coincideGenero = generosSeleccionados.length === 0 || generosSeleccionados.every(g => listaGeneros.includes(g));
+                    const mostrar = coincideTexto && coincideEstado && coincideGenero;
+
+                    tarjeta.hidden = !mostrar;
+                    if (mostrar) resultados++;
+
+                });
+
+                vista.querySelectorAll('.perfil-fila-contenidos').forEach(grupo => {
+
+                    const tarjetasVisibles = grupo.querySelectorAll('.tarjeta:not([hidden])');
+                    grupo.hidden = tarjetasVisibles.length === 0;
+
+                });
+
+                mensajeVacio.hidden = resultados > 0;
+            }
+
+            buscador.addEventListener('input', aplicarFiltros);
+            estados.forEach(input => {input.addEventListener('change', aplicarFiltros);});
+            generos.forEach(input => {input.addEventListener('change', aplicarFiltros);});
+
+            limpiar.addEventListener('click', () => {
+
+                buscador.value = '';
+                estados.forEach(input => {input.checked = input.value === 'todos';});
+                generos.forEach(input => {input.checked = false;});
+
+                aplicarFiltros();
+            });
+
+        });
 
 
     </script>

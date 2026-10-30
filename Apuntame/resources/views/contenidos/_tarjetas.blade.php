@@ -6,12 +6,15 @@
     <link rel="stylesheet" href="{{ asset('css/tarjeta.css') }}">
     <div class="{{ !empty($modoCarrusel) && $modoCarrusel ? 'tarjetas-carrusel' : 'catalogo' }}">
         @foreach ($lista as $contenido)
-            <article class="tarjeta tarjeta-con-boton">
 
-                {{-- Enlace a la ficha del contenido --}}
+            <article
+                class="tarjeta tarjeta-con-boton"
+                data-contenido-titulo="{{ $contenido->titulo }}"
+                data-contenido-estado="{{ $contenido->estado_usuario ?? 'pendiente' }}"
+                data-contenido-generos="{{ $contenido->generos ?? '' }}"
+            >
 
                 <a class="tarjeta-enlace" href="{{ route('contenidos.show', $contenido->id) }}">
-
 
                 @if ($contenido->poster)
                         <img class="poster" src="{{ asset($contenido->poster) }}" alt="Póster de {{ $contenido->titulo }}" loading="lazy">

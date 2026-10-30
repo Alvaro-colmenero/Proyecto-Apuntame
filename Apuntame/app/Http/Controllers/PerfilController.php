@@ -23,7 +23,8 @@ class PerfilController extends Controller
                 'biblioteca.notas',
                 'biblioteca.puntuacion',
                 'biblioteca.fecha_inicio',
-                'biblioteca.fecha_fin'
+                'biblioteca.fecha_fin',
+                'biblioteca.favorito as favorito'
             )
             ->get();
 
@@ -37,6 +38,28 @@ class PerfilController extends Controller
             'serie'
         );
 
+        $favoritosPerfil = DB::table('biblioteca')
+            ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id')
+            ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+            ->where('biblioteca.favorito', 1)
+            ->select(
+                'contenidos.id',
+                'contenidos.titulo',
+                'contenidos.tipo',
+                'contenidos.poster',
+                'contenidos.fecha_estreno'
+            )
+            ->orderByDesc('contenidos.id')
+            ->limit(6)
+            ->get();
+
+        $estadosBiblioteca = [
+            'pendiente' => 'Pendientes',
+            'viendo' => 'Viendo',
+            'vista' => 'Vistas',
+            'pausada' => 'Pausadas',
+            'abandonada' => 'Abandonadas',
+        ];
 
         return view('perfil.index', [
             'usuarioPerfil' => $usuarioPerfil,
@@ -46,6 +69,8 @@ class PerfilController extends Controller
             'actividadPerfil' => collect(),
             'peliculasPerfil' => $peliculasPerfil,
             'seriesPerfil' => $seriesPerfil,
+            'favoritosPerfil' => $favoritosPerfil,
+            'estadosBiblioteca' => $estadosBiblioteca,
         ]);
 
     }
@@ -104,11 +129,11 @@ class PerfilController extends Controller
 
     }
 
+
     private function obtenerBibliotecaPorTipo(int $usuarioId, string $tipo)
     {
         return DB::table('biblioteca')
-            ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id'
-            )
+            ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id')
             ->where('biblioteca.usuario_id', $usuarioId)
             ->where('contenidos.tipo', $tipo)
             ->select(
@@ -117,8 +142,23 @@ class PerfilController extends Controller
                 'biblioteca.puntuacion',
                 'biblioteca.fecha_inicio',
                 'biblioteca.fecha_fin',
-                'biblioteca.notas'
+                'biblioteca.notas',
+                'biblioteca.favorito as favorito'
             )
+            ->selectSub(function ($query) {
+                $query->from('contenidos_generos')
+                    ->join(
+                        'generos',
+                        'generos.id',
+                        '=',
+                        'contenidos_generos.genero_id'
+                    )
+                    ->whereColumn(
+                        'contenidos_generos.contenido_id',
+                        'contenidos.id'
+                    )
+                    ->selectRaw("GROUP_CONCAT(generos.nombre SEPARATOR '|')");
+            }, 'generos')
             ->orderBy('contenidos.titulo')
             ->get()
             ->groupBy(function ($contenido) {
@@ -130,7 +170,10 @@ class PerfilController extends Controller
                     'abandonada',
                 ];
 
-                return in_array($contenido->estado_usuario, $estadosValidos, true) ? $contenido->estado_usuario : 'pendiente';
+                return in_array($contenido->estado_usuario, $estadosValidos, true)
+                    ? $contenido->estado_usuario
+                    : 'pendiente';
             });
     }
+
 }

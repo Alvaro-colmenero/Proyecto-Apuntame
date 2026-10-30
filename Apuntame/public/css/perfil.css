@@ -126,34 +126,41 @@
 
 .perfil-navegacion {
     display: flex;
-    gap: 8px;
+    gap: 28px;
     align-items: center;
     overflow-x: auto;
-    padding: 12px 0;
+    padding: 8px 0;
     margin-bottom: 24px;
-    border-bottom: 1px solid rgba(255,255,255,.12);
+    border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
 .perfil-tab {
     flex: 0 0 auto;
-    padding: 12px 20px;
+    padding: 10px 2px;
     border: 0;
-    border-radius: 8px;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
     background: transparent;
-    color: inherit;
+    color: rgba(255,255,255,.55);
     font: inherit;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background .2s, color .2s;
+    transition: color .2s, border-color .2s;
 }
 
-.perfil-tab:hover,
-.perfil-tab.activo {
-    background: rgba(229,9,20,.15);
-    color: #ff5a62;
+.perfil-tab:hover {
+    color: rgba(255,255,255,.9);
 }
 
 .perfil-tab.activo {
-    box-shadow: inset 0 -2px #e50914;
+    color: #fff;
+    border-bottom-color: #e50914;
+}
+
+.perfil-tab span {
+    margin-right: 6px;
+    opacity: .7;
 }
 
 .perfil-seccion[hidden] {
@@ -230,9 +237,7 @@
 }
 
 /* Separación entre las filas de la biblioteca */
-.perfil-fila-contenidos {
-    margin-top: 28px;
-}
+
 
 .perfil-fila-contenidos + .perfil-fila-contenidos {
     padding-top: 24px;
@@ -284,3 +289,419 @@
     }
 }
 
+/* Distribución cuando no estamos en Inicio */
+.perfil-columnas.perfil-sin-cuenta {
+    grid-template-columns: 1fr;
+}
+
+/* La columna lateral deja de reservar espacio */
+.perfil-sin-cuenta .perfil-lateral {
+    display: contents;
+}
+
+/* Actividad reciente ocupa todo el ancho */
+.perfil-sin-cuenta .perfil-actividad {
+    width: 100%;
+    margin-top: 24px;
+}
+
+.perfil-cuenta[hidden],
+.perfil-actividad[hidden] {
+    display: none !important;
+}
+
+.perfil-columnas.perfil-sin-cuenta {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.perfil-sin-cuenta .perfil-lateral {
+    display: none;
+}
+
+
+
+/* ==========================================
+   PERFIL: DISEÑO DE LA BIBLIOTECA
+========================================== */
+
+/* Eliminar el panel que envuelve la colección */
+.perfil-vista[data-vista="peliculas"] > .perfil-panel,
+.perfil-vista[data-vista="series"] > .perfil-panel {
+    padding: 8px 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Cabecera de cada sección */
+.perfil-vista[data-vista="peliculas"] .perfil-panel-titulo,
+.perfil-vista[data-vista="series"] .perfil-panel-titulo {
+    margin-bottom: 30px;
+}
+
+/* Distribución de las tarjetas */
+.perfil-vista[data-vista="peliculas"] .catalogo,
+.perfil-vista[data-vista="series"] .catalogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(145px, 165px));
+    justify-content: start;
+    gap: 26px 22px;
+}
+
+/* Tarjeta sin caja */
+.perfil-vista[data-vista="peliculas"] .tarjeta,
+.perfil-vista[data-vista="series"] .tarjeta {
+    position: relative;
+    min-width: 0;
+    overflow: visible;
+    padding: 0;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    transition: transform .2s ease;
+}
+
+.perfil-vista[data-vista="peliculas"] .tarjeta:hover,
+.perfil-vista[data-vista="series"] .tarjeta:hover {
+    transform: translateY(-5px);
+}
+
+/* Enlace de la tarjeta */
+.perfil-vista[data-vista="peliculas"] .tarjeta-enlace,
+.perfil-vista[data-vista="series"] .tarjeta-enlace {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Póster */
+.perfil-vista[data-vista="peliculas"] .poster,
+.perfil-vista[data-vista="series"] .poster {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    max-height: 248px;
+    object-fit: cover;
+    border: none;
+    border-radius: 7px;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, .25);
+}
+
+/* Información debajo del póster */
+.perfil-vista[data-vista="peliculas"] .tarjeta-info,
+.perfil-vista[data-vista="series"] .tarjeta-info {
+    padding: 9px 0 0;
+    background: transparent;
+    border: none;
+}
+
+/* Título */
+.perfil-vista[data-vista="peliculas"] .tarjeta-info h3,
+.perfil-vista[data-vista="series"] .tarjeta-info h3 {
+    margin: 0 0 5px;
+    color: #edf5fa;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.4;
+}
+
+/* Año y tipo */
+.perfil-vista[data-vista="peliculas"] .tarjeta-info .meta,
+.perfil-vista[data-vista="series"] .tarjeta-info .meta {
+    color: #91a8b7;
+    font-size: 11px;
+}
+
+/* Géneros */
+.perfil-vista[data-vista="peliculas"] .tarjeta-generos,
+.perfil-vista[data-vista="series"] .tarjeta-generos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.perfil-vista[data-vista="peliculas"] .tarjeta-generos .etiqueta,
+.perfil-vista[data-vista="series"] .tarjeta-generos .etiqueta {
+    padding: 3px 7px;
+    border: 0;
+    border-radius: 4px;
+    background: rgba(37, 191, 208, .10);
+    color: #8bdce5;
+    font-size: 10px;
+}
+
+/* Botón añadir: pequeño y superpuesto */
+.perfil-vista[data-vista="peliculas"] .boton-lista-mini,
+.perfil-vista[data-vista="series"] .boton-lista-mini {
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(5, 15, 22, .85);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+
+.perfil-vista[data-vista="peliculas"] .boton-lista-mini:hover,
+.perfil-vista[data-vista="series"] .boton-lista-mini:hover {
+    background: #25bfd0;
+    color: #07151c;
+    transform: scale(1.08);
+}
+
+/* Póster sin imagen */
+.perfil-vista[data-vista="peliculas"] .poster-vacio,
+.perfil-vista[data-vista="series"] .poster-vacio {
+    display: grid;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    max-height: 248px;
+    place-items: center;
+    padding: 12px;
+    border-radius: 7px;
+    background: #142630;
+    color: #a9bdc9;
+    text-align: center;
+}
+
+/* Separación de los grupos: Mi lista, En curso, etc. */
+.perfil-fila-contenidos {
+    margin-top: 32px;
+}
+
+.perfil-fila-contenidos + .perfil-fila-contenidos {
+    padding-top: 26px;
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.perfil-fila-contenidos .titulo-seccion {
+    margin-bottom: 18px;
+}
+
+.perfil-fila-contenidos .titulo-seccion h2 {
+    margin: 0;
+    font-size: 17px;
+}
+
+/* Móviles */
+@media (max-width: 600px) {
+    .perfil-vista[data-vista="peliculas"] .catalogo,
+    .perfil-vista[data-vista="series"] .catalogo {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px 14px;
+    }
+
+    .perfil-vista[data-vista="peliculas"] .poster,
+    .perfil-vista[data-vista="series"] .poster {
+        max-height: none;
+    }
+}
+
+.perfil-favoritos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.perfil-favorito-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+}
+
+.perfil-favorito-poster {
+    width: 48px;
+    height: 68px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.perfil-favorito-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.perfil-favorito-info strong {
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.perfil-favorito-info small {
+    color: #999;
+    font-size: 12px;
+}
+
+.perfil-favorito-corazon {
+    margin-left: auto;
+    color: #e05270;
+    font-size: 19px;
+}
+
+
+/* =====================================
+   FILTROS DE LA BIBLIOTECA
+===================================== */
+
+.perfil-biblioteca-layout {
+    display: grid;
+    grid-template-columns: 215px minmax(0, 1fr);
+    gap: 30px;
+    align-items: start;
+}
+
+.perfil-filtros {
+    position: sticky;
+    top: 25px;
+    min-width: 0;
+    padding: 5px 0;
+    background: transparent;
+}
+
+.perfil-filtros-cabecera {
+    margin-bottom: 25px;
+}
+
+.perfil-filtros-cabecera h3 {
+    margin: 9px 0;
+    font-size: 17px;
+    color: #edf5fa;
+}
+
+.perfil-filtro-buscador {
+    display: grid;
+    gap: 9px;
+    margin-bottom: 25px;
+}
+
+.perfil-filtro-buscador label,
+.perfil-filtro-grupo h4 {
+    color: #edf5fa;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.perfil-filtro-buscador input {
+    width: 100%;
+    padding: 11px 12px;
+    background: #142630;
+    border: 0;
+    border-radius: 7px;
+    outline: none;
+    color: #edf5fa;
+    font: inherit;
+    font-size: 12px;
+}
+
+.perfil-filtro-buscador input:focus {
+    box-shadow: 0 0 0 1px #25bfd0;
+}
+
+.perfil-filtro-buscador input::placeholder {
+    color: #728b9a;
+}
+
+.perfil-filtro-grupo {
+    display: grid;
+    gap: 13px;
+    margin-bottom: 27px;
+}
+
+.perfil-filtro-grupo h4 {
+    margin: 0 0 3px;
+}
+
+.perfil-filtro-grupo label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #a9bdc9;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color .2s;
+}
+
+.perfil-filtro-grupo label:hover {
+    color: #25bfd0;
+}
+
+.perfil-filtro-grupo input {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    accent-color: #25bfd0;
+    cursor: pointer;
+}
+
+.perfil-filtro-limpiar {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: #25bfd0;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.perfil-filtro-limpiar:hover {
+    color: #5ad8e3;
+}
+
+
+
+.perfil-filtro-sin-resultados {
+    padding: 25px 0;
+    color: #91a8b7;
+    font-size: 13px;
+}
+
+@media (max-width: 750px) {
+    .perfil-biblioteca-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 25px;
+    }
+
+    .perfil-filtros {
+        position: static;
+    }
+
+    .perfil-filtros-cabecera {
+        margin-bottom: 17px;
+    }
+
+    .perfil-filtro-grupo {
+        margin-bottom: 18px;
+    }
+}
+
+/* Acercar las primeras filas al contenido superior */
+.perfil-biblioteca-resultados {
+    padding-top: 0;
+    margin-top: -100px;
+}
+
+/* Reducir el espacio entre el título y las tarjetas */
+.perfil-fila-contenidos:first-child {
+    margin-top: 0;
+}
