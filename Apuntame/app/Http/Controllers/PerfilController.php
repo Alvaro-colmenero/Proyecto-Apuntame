@@ -14,92 +14,209 @@ class PerfilController extends Controller
     {
         $usuarioPerfil = auth()->user();
 
+        $contenidosPerfil = DB::table('biblioteca')
+        ->join('contenidos', 'biblioteca.contenido_id', '=', 'contenidos.id')
+        ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+        ->select(
+            'contenidos.*',
+            'biblioteca.estado',
+            'biblioteca.notas',
+            'biblioteca.puntuacion',
+            'biblioteca.fecha_inicio',
+            'biblioteca.fecha_fin',
+            'biblioteca.favorito as favorito'
+        )
+        ->selectSub(function ($query) {
+            $query->from('temporadas')
+                ->join(
+                    'episodios',
+                    'episodios.temporada_id',
+                    '=',
+                    'temporadas.id'
+                )
+                ->whereColumn(
+                    'temporadas.contenido_id',
+                    'contenidos.id'
+                )
+                ->selectRaw('COUNT(episodios.id)');
+        }, 'max_episodios')
+        ->selectSub(function ($query) use ($usuarioPerfil) {
+            $query->from('temporadas')
+                ->join(
+                    'episodios',
+                    'episodios.temporada_id',
+                    '=',
+                    'temporadas.id'
+                )
+                ->join(
+                    'episodios_vistos',
+                    'episodios_vistos.episodio_id',
+                    '=',
+                    'episodios.id'
+                )
+                ->whereColumn(
+                    'temporadas.contenido_id',
+                    'contenidos.id'
+                )
+                ->where(
+                    'episodios_vistos.usuario_id',
+                    $usuarioPerfil->id
+                )
+                ->selectRaw('COUNT(episodios_vistos.episodio_id)');
+        }, 'episodios_vistos_usuario')
+        ->get();
+
+
+            $peliculasPerfil = $this->obtenerBibliotecaPorTipo(
+                auth()->id(),
+                'pelicula'
+            );
+
+            $seriesPerfil = $this->obtenerBibliotecaPorTipo(
+                auth()->id(),
+                'serie'
+            );
+
+            $favoritosPerfil = DB::table('biblioteca')
+                ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id')
+                ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+                ->where('biblioteca.favorito', 1)
+                ->select(
+                    'contenidos.id',
+                    'contenidos.titulo',
+                    'contenidos.tipo',
+                    'contenidos.poster',
+                    'contenidos.fecha_estreno'
+                )
+                ->orderByDesc('contenidos.id')
+                ->limit(6)
+                ->get();
+
+            $estadosBiblioteca = [
+                'pendiente' => 'Pendientes',
+                'viendo' => 'Viendo',
+                'vista' => 'Vistas',
+                'pausada' => 'Pausadas',
+                'abandonada' => 'Abandonadas',
+            ];
+
         
-$contenidosPerfil = DB::table('biblioteca')
-    ->join('contenidos', 'biblioteca.contenido_id', '=', 'contenidos.id')
-    ->where('biblioteca.usuario_id', $usuarioPerfil->id)
-    ->select(
-        'contenidos.*',
-        'biblioteca.estado',
-        'biblioteca.notas',
-        'biblioteca.puntuacion',
-        'biblioteca.fecha_inicio',
-        'biblioteca.fecha_fin',
-        'biblioteca.favorito as favorito'
-    )
-    ->selectSub(function ($query) {
-        $query->from('temporadas')
-            ->join(
-                'episodios',
-                'episodios.temporada_id',
-                '=',
-                'temporadas.id'
-            )
-            ->whereColumn(
-                'temporadas.contenido_id',
-                'contenidos.id'
-            )
-            ->selectRaw('COUNT(episodios.id)');
-    }, 'max_episodios')
-    ->selectSub(function ($query) use ($usuarioPerfil) {
-        $query->from('temporadas')
-            ->join(
-                'episodios',
-                'episodios.temporada_id',
-                '=',
-                'temporadas.id'
-            )
-            ->join(
-                'episodios_vistos',
-                'episodios_vistos.episodio_id',
-                '=',
-                'episodios.id'
-            )
-            ->whereColumn(
-                'temporadas.contenido_id',
-                'contenidos.id'
-            )
-            ->where(
-                'episodios_vistos.usuario_id',
-                $usuarioPerfil->id
-            )
-            ->selectRaw('COUNT(episodios_vistos.episodio_id)');
-    }, 'episodios_vistos_usuario')
-    ->get();
+        // =========================================
+        // ESTADÍSTICAS DE LA BIBLIOTECA
+        // =========================================
 
+        $estadisticas = [];
 
-        $peliculasPerfil = $this->obtenerBibliotecaPorTipo(
-            auth()->id(),
-            'pelicula'
-        );
-
-        $seriesPerfil = $this->obtenerBibliotecaPorTipo(
-            auth()->id(),
-            'serie'
-        );
-
-        $favoritosPerfil = DB::table('biblioteca')
+        // Cantidad de películas y series
+        $estadisticas['total_peliculas'] = DB::table('biblioteca')
             ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id')
             ->where('biblioteca.usuario_id', $usuarioPerfil->id)
-            ->where('biblioteca.favorito', 1)
-            ->select(
-                'contenidos.id',
-                'contenidos.titulo',
-                'contenidos.tipo',
-                'contenidos.poster',
-                'contenidos.fecha_estreno'
-            )
-            ->orderByDesc('contenidos.id')
-            ->limit(6)
+            ->where('contenidos.tipo', 'pelicula')
+            ->count();
+
+        $estadisticas['total_series'] = DB::table('biblioteca')
+            ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id')
+            ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+            ->where('contenidos.tipo', 'serie')
+            ->count();
+
+        $estadisticas['total_contenidos'] =
+            $estadisticas['total_peliculas'] + $estadisticas['total_series'];
+
+        // Episodios vistos
+        $estadisticas['episodios_vistos'] = DB::table('episodios_vistos')
+            ->where('usuario_id', $usuarioPerfil->id)
+            ->count();
+
+        // Películas finalizadas
+        $estadisticas['peliculas_vistas'] = DB::table('biblioteca')
+            ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id')
+            ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+            ->where('contenidos.tipo', 'pelicula')
+            ->where('biblioteca.estado', 'vista')
+            ->count();
+
+        // Series con algún episodio visto
+        $estadisticas['series_empezadas'] = DB::table('episodios_vistos')
+            ->join('episodios', 'episodios.id', '=', 'episodios_vistos.episodio_id')
+            ->join('temporadas', 'temporadas.id', '=', 'episodios.temporada_id')
+            ->join('contenidos', 'contenidos.id', '=', 'temporadas.contenido_id')
+            ->where('episodios_vistos.usuario_id', $usuarioPerfil->id)
+            ->distinct()
+            ->count('contenidos.id');
+
+        // Tiempo de visualización en minutos
+        $minutosPeliculas = 0;
+
+        // Comprobar si contenidos tiene una columna de duración.
+        // Se presupone que su unidad es minutos.
+        if (\Illuminate\Support\Facades\Schema::hasColumn('contenidos', 'duracion')) {
+            $minutosPeliculas = (int) DB::table('biblioteca')
+                ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id')
+                ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+                ->where('contenidos.tipo', 'pelicula')
+                ->where('biblioteca.estado', 'vista')
+                ->sum('contenidos.duracion');
+        }
+
+        // Duración de los episodios vistos.
+        // Se presupone que episodios.duracion está expresada en minutos.
+        $minutosEpisodios = (int) DB::table('episodios_vistos')
+            ->join('episodios', 'episodios.id', '=', 'episodios_vistos.episodio_id')
+            ->where('episodios_vistos.usuario_id', $usuarioPerfil->id)
+            ->sum('episodios.duracion');
+
+        $estadisticas['minutos_vistos'] =
+            $minutosPeliculas + $minutosEpisodios;
+
+        $estadisticas['horas_vistas'] =
+            round($estadisticas['minutos_vistos'] / 60, 1);
+
+        $estadisticas['dias_vistos'] =
+            round($estadisticas['minutos_vistos'] / 1440, 2);
+
+        // Géneros más vistos: contenidos finalizados o series con episodios vistos
+        $generosMasVistos = DB::table('biblioteca')
+            ->join('contenidos', 'contenidos.id', '=', 'biblioteca.contenido_id')
+            ->join('contenidos_generos', 'contenidos_generos.contenido_id', '=', 'contenidos.id')
+            ->join('generos', 'generos.id', '=', 'contenidos_generos.genero_id')
+            ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+            ->where(function ($query) use ($usuarioPerfil) {
+                $query->where(function ($q) {
+                    $q->where('contenidos.tipo', 'pelicula')
+                    ->where('biblioteca.estado', 'vista');
+                })
+                ->orWhere(function ($q) use ($usuarioPerfil) {
+                    $q->where('contenidos.tipo', 'serie')
+                    ->whereExists(function ($subquery) use ($usuarioPerfil) {
+                        $subquery->select(DB::raw(1))
+                            ->from('temporadas')
+                            ->join('episodios', 'episodios.temporada_id', '=', 'temporadas.id')
+                            ->join('episodios_vistos', 'episodios_vistos.episodio_id', '=', 'episodios.id')
+                            ->whereColumn('temporadas.contenido_id', 'contenidos.id')
+                            ->where('episodios_vistos.usuario_id', $usuarioPerfil->id);
+                    });
+                });
+            })
+            ->select('generos.nombre', DB::raw('COUNT(DISTINCT contenidos.id) as total'))
+            ->groupBy('generos.id', 'generos.nombre')
+            ->orderByDesc('total')
+            ->limit(8)
             ->get();
 
-        $estadosBiblioteca = [
-            'pendiente' => 'Pendientes',
-            'viendo' => 'Viendo',
-            'vista' => 'Vistas',
-            'pausada' => 'Pausadas',
-            'abandonada' => 'Abandonadas',
-        ];
+        // Estados de la biblioteca
+        $estadisticas['estados'] = DB::table('biblioteca')
+            ->where('usuario_id', $usuarioPerfil->id)
+            ->select('estado', DB::raw('COUNT(*) as total'))
+            ->groupBy('estado')
+            ->get();
+
+        $estadisticas['generos'] = $generosMasVistos;
+
+        // Máximo para calcular los porcentajes de las barras
+        $estadisticas['max_genero'] = max( 1,(int) $generosMasVistos->max('total')
+        );
+
 
         return view('perfil.index', [
             'usuarioPerfil' => $usuarioPerfil,
@@ -111,6 +228,8 @@ $contenidosPerfil = DB::table('biblioteca')
             'seriesPerfil' => $seriesPerfil,
             'favoritosPerfil' => $favoritosPerfil,
             'estadosBiblioteca' => $estadosBiblioteca,
+            'estadisticas' => $estadisticas,
+            
         ]);
 
     }

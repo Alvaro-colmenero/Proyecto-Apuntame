@@ -246,6 +246,202 @@
                     </section>
                 </section>
 
+                
+                {{-- ESTADÍSTICAS --}}
+                <section class="perfil-vista" data-vista="estadisticas" hidden>
+
+                    <section class="perfil-panel">
+
+                        <div class="perfil-panel-titulo">
+                            <div>
+                                <span class="perfil-mini-etiqueta">TUS NÚMEROS</span>
+                                <h2>Mis estadísticas</h2>
+                                <p>Descubre cuánto cine y televisión has disfrutado.</p>
+                            </div>
+                            <span class="perfil-panel-icono">▥</span>
+                        </div>
+
+                        {{-- TARJETAS PRINCIPALES --}}
+                        <div class="estadisticas-resumen">
+
+                            <article class="estadistica-tarjeta">
+                                <span>Películas en biblioteca</span>
+                                <strong>{{ $estadisticas['total_peliculas'] }}</strong>
+                                <small>Películas guardadas</small>
+                            </article>
+
+                            <article class="estadistica-tarjeta">
+                                <span>Series en biblioteca</span>
+                                <strong>{{ $estadisticas['total_series'] }}</strong>
+                                <small>Series guardadas</small>
+                            </article>
+
+                            <article class="estadistica-tarjeta">
+                                <span>Películas vistas</span>
+                                <strong>{{ $estadisticas['peliculas_vistas'] }}</strong>
+                                <small>Películas finalizadas</small>
+                            </article>
+
+                            <article class="estadistica-tarjeta">
+                                <span>Episodios vistos</span>
+                                <strong>{{ $estadisticas['episodios_vistos'] }}</strong>
+                                <small>Registrados en tu biblioteca</small>
+                            </article>
+
+                        </div>
+
+                        {{-- TIEMPO DE VISUALIZACIÓN --}}
+                        <section class="estadistica-bloque">
+
+                            <div class="estadistica-titulo">
+                                <h3>Tiempo de visualización</h3>
+                                <p>Tiempo acumulado de películas y episodios vistos.</p>
+                            </div>
+
+                            <div class="estadistica-tiempo">
+                                <div>
+                                    <strong>{{ number_format($estadisticas['dias_vistos'], 2, ',', '.') }}</strong>
+                                    <span>Días</span>
+                                </div>
+
+                                <div>
+                                    <strong>{{ number_format($estadisticas['horas_vistas'], 1, ',', '.') }}</strong>
+                                    <span>Horas</span>
+                                </div>
+
+                                <div>
+                                    <strong>{{ number_format($estadisticas['minutos_vistos'], 0, ',', '.') }}</strong>
+                                    <span>Minutos</span>
+                                </div>
+                            </div>
+
+                        </section>
+
+                        {{-- GRÁFICO DE PELÍCULAS Y SERIES --}}
+                        <section class="estadistica-bloque">
+
+                            <div class="estadistica-titulo">
+                                <h3>Composición de tu biblioteca</h3>
+                                <p>Comparación entre películas y series.</p>
+                            </div>
+
+                            @php
+                                $totalBiblioteca = max(1, $estadisticas['total_contenidos']);
+                                $porcentajePeliculas = round(
+                                    $estadisticas['total_peliculas'] / $totalBiblioteca * 100
+                                );
+                                $porcentajeSeries = round(
+                                    $estadisticas['total_series'] / $totalBiblioteca * 100
+                                );
+                            @endphp
+
+                            <div class="estadistica-grafico-barras">
+
+                                <div class="estadistica-barra-item">
+                                    <div class="estadistica-barra-info">
+                                        <span>Películas</span>
+                                        <strong>{{ $estadisticas['total_peliculas'] }} ({{ $porcentajePeliculas }}%)</strong>
+                                    </div>
+                                    <div class="estadistica-barra-fondo">
+                                        <div class="estadistica-barra pelicula"
+                                            style="width: {{ $porcentajePeliculas }}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="estadistica-barra-item">
+                                    <div class="estadistica-barra-info">
+                                        <span>Series</span>
+                                        <strong>{{ $estadisticas['total_series'] }} ({{ $porcentajeSeries }}%)</strong>
+                                    </div>
+                                    <div class="estadistica-barra-fondo">
+                                        <div class="estadistica-barra serie"
+                                            style="width: {{ $porcentajeSeries }}%"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        {{-- GÉNEROS MÁS VISTOS --}}
+                        <section class="estadistica-bloque">
+
+                            <div class="estadistica-titulo">
+                                <h3>Tus géneros favoritos</h3>
+                                <p>Géneros de películas vistas y series con episodios vistos.</p>
+                            </div>
+
+                            @if($estadisticas['generos']->isNotEmpty())
+
+                                <div class="estadistica-generos">
+
+                                    @foreach($estadisticas['generos'] as $genero)
+                                        <div class="estadistica-barra-item">
+
+                                            <div class="estadistica-barra-info">
+                                                <span>{{ $genero->nombre }}</span>
+                                                <strong>{{ $genero->total }} contenidos</strong>
+                                            </div>
+
+                                            <div class="estadistica-barra-fondo">
+                                                <div class="estadistica-barra genero"
+                                                    style="width: {{ ($genero->total / $estadisticas['max_genero']) * 100 }}%">
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    @endforeach
+
+                                </div>
+
+                            @else
+                                <p class="estadistica-vacia">
+                                    Todavía no hay suficientes contenidos vistos para mostrar tus géneros.
+                                </p>
+                            @endif
+
+                        </section>
+
+                        {{-- ESTADOS --}}
+                        <section class="estadistica-bloque">
+
+                            <div class="estadistica-titulo">
+                                <h3>Estado de mi biblioteca</h3>
+                                <p>Cómo tienes organizados tus contenidos.</p>
+                            </div>
+
+                            <div class="estadistica-estados">
+
+                                @php
+                                    $nombresEstados = [
+                                        'pendiente' => 'Pendientes',
+                                        'viendo' => 'Viendo',
+                                        'vista' => 'Vistas',
+                                        'pausada' => 'Pausadas',
+                                        'abandonada' => 'Abandonadas',
+                                    ];
+                                @endphp
+
+                                @foreach($nombresEstados as $clave => $nombre)
+                                    @php
+                                        $cantidad = $estadisticas['estados']
+                                            ->firstWhere('estado', $clave)?->total ?? 0;
+                                    @endphp
+
+                                    <div class="estadistica-estado">
+                                        <span>{{ $nombre }}</span>
+                                        <strong>{{ $cantidad }}</strong>
+                                    </div>
+                                @endforeach
+
+                            </div>
+
+                        </section>
+
+                    </section>
+
+                </section>
+
 
                 {{-- SOCIAL --}}
                 <section class="perfil-vista" data-vista="social" hidden>
