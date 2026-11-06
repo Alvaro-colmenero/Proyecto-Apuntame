@@ -14,19 +14,59 @@ class PerfilController extends Controller
     {
         $usuarioPerfil = auth()->user();
 
-        $contenidosPerfil = DB::table('biblioteca')
-            ->join('contenidos', 'biblioteca.contenido_id', '=', 'contenidos.id')
-            ->where('biblioteca.usuario_id', $usuarioPerfil->id)
-            ->select(
-                'contenidos.*',
-                'biblioteca.estado',
-                'biblioteca.notas',
-                'biblioteca.puntuacion',
-                'biblioteca.fecha_inicio',
-                'biblioteca.fecha_fin',
-                'biblioteca.favorito as favorito'
+        
+$contenidosPerfil = DB::table('biblioteca')
+    ->join('contenidos', 'biblioteca.contenido_id', '=', 'contenidos.id')
+    ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+    ->select(
+        'contenidos.*',
+        'biblioteca.estado',
+        'biblioteca.notas',
+        'biblioteca.puntuacion',
+        'biblioteca.fecha_inicio',
+        'biblioteca.fecha_fin',
+        'biblioteca.favorito as favorito'
+    )
+    ->selectSub(function ($query) {
+        $query->from('temporadas')
+            ->join(
+                'episodios',
+                'episodios.temporada_id',
+                '=',
+                'temporadas.id'
             )
-            ->get();
+            ->whereColumn(
+                'temporadas.contenido_id',
+                'contenidos.id'
+            )
+            ->selectRaw('COUNT(episodios.id)');
+    }, 'max_episodios')
+    ->selectSub(function ($query) use ($usuarioPerfil) {
+        $query->from('temporadas')
+            ->join(
+                'episodios',
+                'episodios.temporada_id',
+                '=',
+                'temporadas.id'
+            )
+            ->join(
+                'episodios_vistos',
+                'episodios_vistos.episodio_id',
+                '=',
+                'episodios.id'
+            )
+            ->whereColumn(
+                'temporadas.contenido_id',
+                'contenidos.id'
+            )
+            ->where(
+                'episodios_vistos.usuario_id',
+                $usuarioPerfil->id
+            )
+            ->selectRaw('COUNT(episodios_vistos.episodio_id)');
+    }, 'episodios_vistos_usuario')
+    ->get();
+
 
         $peliculasPerfil = $this->obtenerBibliotecaPorTipo(
             auth()->id(),
@@ -130,6 +170,7 @@ class PerfilController extends Controller
     }
 
 
+    
     private function obtenerBibliotecaPorTipo(int $usuarioId, string $tipo)
     {
         return DB::table('biblioteca')
@@ -145,6 +186,50 @@ class PerfilController extends Controller
                 'biblioteca.notas',
                 'biblioteca.favorito as favorito'
             )
+
+            // Total de episodios que tiene la serie
+            ->selectSub(function ($query) {
+                $query->from('temporadas')
+                    ->join(
+                        'episodios',
+                        'episodios.temporada_id',
+                        '=',
+                        'temporadas.id'
+                    )
+                    ->whereColumn(
+                        'temporadas.contenido_id',
+                        'contenidos.id'
+                    )
+                    ->selectRaw('COUNT(episodios.id)');
+            }, 'max_episodios')
+
+            // Episodios que ha visto el usuario
+            ->selectSub(function ($query) use ($usuarioId) {
+                $query->from('temporadas')
+                    ->join(
+                        'episodios',
+                        'episodios.temporada_id',
+                        '=',
+                        'temporadas.id'
+                    )
+                    ->join(
+                        'episodios_vistos',
+                        'episodios_vistos.episodio_id',
+                        '=',
+                        'episodios.id'
+                    )
+                    ->whereColumn(
+                        'temporadas.contenido_id',
+                        'contenidos.id'
+                    )
+                    ->where(
+                        'episodios_vistos.usuario_id',
+                        $usuarioId
+                    )
+                    ->selectRaw('COUNT(episodios_vistos.episodio_id)');
+            }, 'episodios_vistos_usuario')
+
+            // Géneros del contenido
             ->selectSub(function ($query) {
                 $query->from('contenidos_generos')
                     ->join(
@@ -157,8 +242,11 @@ class PerfilController extends Controller
                         'contenidos_generos.contenido_id',
                         'contenidos.id'
                     )
-                    ->selectRaw("GROUP_CONCAT(generos.nombre SEPARATOR '|')");
+                    ->selectRaw(
+                        "GROUP_CONCAT(generos.nombre SEPARATOR '|')"
+                    );
             }, 'generos')
+
             ->orderBy('contenidos.titulo')
             ->get()
             ->groupBy(function ($contenido) {
@@ -170,10 +258,15 @@ class PerfilController extends Controller
                     'abandonada',
                 ];
 
-                return in_array($contenido->estado_usuario, $estadosValidos, true)
+                return in_array(
+                    $contenido->estado_usuario,
+                    $estadosValidos,
+                    true
+                )
                     ? $contenido->estado_usuario
                     : 'pendiente';
             });
     }
+
 
 }

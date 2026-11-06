@@ -65,6 +65,8 @@
                     data-fecha-fin="{{ $contenido->fecha_fin ?? '' }}"
                     data-notas="{{ $contenido->notas ?? '' }}"
                     data-favorito="{{ (int) ($contenido->favorito ?? 0) }}"
+                    data-max-episodios="{{ $contenido->max_episodios ?? 0 }}"
+                    data-episodios-vistos="{{ $contenido->episodios_vistos_usuario ?? 0 }}"
                 >
                     +
                 </button>

@@ -32,21 +32,23 @@
 
 
                 <button type="button"
-                        class="boton"
-                        data-abrir-biblioteca
-                        data-id="{{ $contenido->id }}"
-                        data-titulo="{{ $contenido->titulo }}"
-                        data-tipo="{{ $contenido->tipo }}"
-                        data-portada="{{ $contenido->poster ? asset($contenido->poster) : '' }}"
-                        data-banner="{{ $contenido->banner ? asset($contenido->banner) : '' }}"
-                        title="Añadir a mi lista"
-                        aria-label="Añadir {{ $contenido->titulo }} a mi lista"
-                        data-estado="{{ $contenido->estado_usuario ?? $contenido->estado ?? 'pendiente' }}"
-                        data-puntuacion="{{ $contenido->puntuacion ?? '' }}"
-                        data-fecha-inicio="{{ $contenido->fecha_inicio ?? '' }}"
-                        data-fecha-fin="{{ $contenido->fecha_fin ?? '' }}"
-                        data-notas="{{ $contenido->notas ?? '' }}"
-                        data-favorito="{{ (int) ($contenido->favorito ?? 0) }}"
+                    class="boton-lista-mini"
+                    title="Añadir a mi lista"
+                    aria-label="Añadir {{ $contenido->titulo }} a mi lista"
+                    data-abrir-biblioteca
+                    data-id="{{ $contenido->id }}"
+                    data-titulo="{{ $contenido->titulo }}"
+                    data-tipo="{{ $contenido->tipo }}"
+                    data-portada="{{ $contenido->poster ? asset($contenido->poster) : '' }}"
+                    data-banner="{{ $contenido->banner ? asset($contenido->banner) : '' }}"
+                    data-estado="{{ $contenido->estado_usuario ?? $contenido->estado ?? 'pendiente' }}"
+                    data-puntuacion="{{ $contenido->puntuacion ?? '' }}"
+                    data-fecha-inicio="{{ $contenido->fecha_inicio ?? '' }}"
+                    data-fecha-fin="{{ $contenido->fecha_fin ?? '' }}"
+                    data-notas="{{ $contenido->notas ?? '' }}"
+                    data-favorito="{{ (int) ($contenido->favorito ?? 0) }}"
+                    data-max-episodios="{{ $contenido->max_episodios ?? 0 }}"
+                    data-episodios-vistos="{{ $contenido->episodios_vistos_usuario ?? 0 }}"
                 >
                     + Añadir a mi lista
                 </button>

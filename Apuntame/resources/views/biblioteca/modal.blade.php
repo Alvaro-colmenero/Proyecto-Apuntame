@@ -46,10 +46,11 @@
             <input type="hidden" name="contenido_id" id="bibliotecaContenidoId">
             <input type="hidden" name="favorito" id="bibliotecaFavorito" value="0">
 
+
             <div class="biblioteca-form-grid">
 
                 {{-- ESTADO --}}
-                <div class="biblioteca-campo">
+                <div class="biblioteca-campo campo-estado">
                     <label for="bibliotecaEstado">Estado</label>
                     <select name="estado" id="bibliotecaEstado" required>
                         <option value="pendiente">Pendiente</option>
@@ -61,23 +62,43 @@
                 </div>
 
                 {{-- PUNTUACIÓN --}}
-
-                <div class="biblioteca-campo">
+                <div class="biblioteca-campo campo-puntuacion">
                     <label for="bibliotecaPuntuacion">Puntuación (0-10)</label>
-                    <input type="number" name="puntuacion" id="bibliotecaPuntuacion" min="0" max="10" step="0.1" placeholder="Ej. 8.5">
+                    <input type="number" name="puntuacion" id="bibliotecaPuntuacion" min="0" max="10" step="0.1" placeholder="Ej. 8.5" >
                 </div>
 
+                {{-- EPISODIOS VISTOS: SOLO SERIES --}}
+                <div
+                    class="biblioteca-campo biblioteca-campo-episodios campo-episodios"
+                    id="campoEpisodiosVistos"
+                    hidden
+                >
+                    <label for="bibliotecaEpisodiosVistos">
+                        Episodios vistos
+                    </label>
 
-                {{-- FECHA DE INICIO --}}
-                <div class="biblioteca-campo">
-                    <label for="bibliotecaFechaInicio">Fecha de inicio</label>
-                    <input type="date" name="fecha_inicio" id="bibliotecaFechaInicio">
+                    <div class="biblioteca-episodios-control">
+                        <input type="number" name="episodios_vistos" id="bibliotecaEpisodiosVistos" min="0"  max="0" step="1" value="0" disabled >
+
+                        <span id="bibliotecaMaxEpisodios">
+                            0 episodios disponibles
+                        </span>
+                    </div>
+
                 </div>
 
-                {{-- FECHA DE FIN --}}
-                <div class="biblioteca-campo">
-                    <label for="bibliotecaFechaFin">Fecha de finalización</label>
-                    <input type="date" name="fecha_fin" id="bibliotecaFechaFin">
+                <div class="biblioteca-fechas">
+
+                    <div class="biblioteca-campo campo-fecha-inicio">
+                        <label for="bibliotecaFechaInicio">Fecha de inicio</label>
+                        <input type="date" name="fecha_inicio" id="bibliotecaFechaInicio">
+                    </div>
+
+                    <div class="biblioteca-campo campo-fecha-fin">
+                        <label for="bibliotecaFechaFin">Fecha de finalización</label>
+                        <input type="date" name="fecha_fin" id="bibliotecaFechaFin">
+                    </div>
+
                 </div>
 
             </div>
@@ -85,12 +106,20 @@
             {{-- NOTAS --}}
             <div class="biblioteca-campo biblioteca-campo-notas">
                 <label for="bibliotecaNotas">Mis notas personales</label>
-                <textarea name="notas" id="bibliotecaNotas" rows="4" maxlength="5000" placeholder="¿Qué te parece? ¿Por qué quieres verla? ¿En qué episodio te quedaste?"></textarea>
+
+                <textarea
+                    name="notas"
+                    id="bibliotecaNotas"
+                    rows="4"
+                    maxlength="5000"
+                    placeholder="¿Qué te parece? ¿Por qué quieres verla? ¿En qué episodio te quedaste?"
+                ></textarea>
 
                 <div class="biblioteca-contador">
                     <span id="bibliotecaCaracteres">0</span>/5000 caracteres
                 </div>
             </div>
+
 
             {{-- BOTONES --}}
             <div class="modal-biblioteca-acciones">
@@ -106,157 +135,298 @@
     </div>
 </div>
 
+
 <script>
-    (function () {
-        function inicializarModalBiblioteca() {
-            const modal = document.getElementById('modalBiblioteca');
+(function () {
 
-            if (!modal || modal.dataset.inicializado) return;
-            modal.dataset.inicializado = 'true';
+    function inicializarModalBiblioteca() {
 
-            const idInput = document.getElementById('bibliotecaContenidoId');
-            const titulo = document.getElementById('modalBibliotecaTitulo');
-            const nombre = document.getElementById('modalBibliotecaNombre');
-            const tipoTexto = document.getElementById('bibliotecaTipo');
-            const estado = document.getElementById('bibliotecaEstado');
-            const puntuacion = document.getElementById('bibliotecaPuntuacion');
-            const fechaInicio = document.getElementById('bibliotecaFechaInicio');
-            const fechaFin = document.getElementById('bibliotecaFechaFin');
-            const notas = document.getElementById('bibliotecaNotas');
-            const contador = document.getElementById('bibliotecaCaracteres');
-            const banner = document.getElementById('bibliotecaBanner');
-            const portada = document.getElementById('bibliotecaPortada');
-            const portadaVacia = document.getElementById('bibliotecaPortadaVacia');
-            const botonFavorito = document.getElementById('bibliotecaBotonFavorito');
-            const favoritoInput = document.getElementById('bibliotecaFavorito');
-            const textoFavorito = document.getElementById('bibliotecaEstadoFavorito');
-            const opcionViendo = estado.querySelector('[data-solo-serie]');
+        const modal = document.getElementById('modalBiblioteca');
 
-            function actualizarFavorito(esFavorito) {
-                favoritoInput.value = esFavorito ? '1' : '0';
-                botonFavorito.classList.toggle('es-favorito', esFavorito);
-                botonFavorito.setAttribute('aria-pressed', String(esFavorito));
-                botonFavorito.setAttribute(
-                    'aria-label',
-                    esFavorito ? 'Quitar de favoritos' : 'Añadir a favoritos'
-                );
-                botonFavorito.title = esFavorito
-                    ? 'Quitar de favoritos'
-                    : 'Añadir a favoritos';
+        if (!modal || modal.dataset.inicializado) return;
 
-                textoFavorito.hidden = !esFavorito;
-            }
+        modal.dataset.inicializado = 'true';
 
-            function abrirModal(datos) {
-                idInput.value = datos.id || '';
-                titulo.textContent = datos.titulo || 'Mi biblioteca';
-                nombre.textContent = datos.titulo || '';
+        const idInput = document.getElementById('bibliotecaContenidoId');
+        const titulo = document.getElementById('modalBibliotecaTitulo');
+        const nombre = document.getElementById('modalBibliotecaNombre');
+        const tipoTexto = document.getElementById('bibliotecaTipo');
 
-                const esSerie = datos.tipo === 'serie';
-                tipoTexto.textContent = esSerie ? 'Serie' : 'Película';
+        const estado = document.getElementById('bibliotecaEstado');
+        const puntuacion = document.getElementById('bibliotecaPuntuacion');
+        const fechaInicio = document.getElementById('bibliotecaFechaInicio');
+        const fechaFin = document.getElementById('bibliotecaFechaFin');
+        const notas = document.getElementById('bibliotecaNotas');
 
-                opcionViendo.hidden = !esSerie;
-                opcionViendo.disabled = !esSerie;
+        const contador = document.getElementById('bibliotecaCaracteres');
+        const banner = document.getElementById('bibliotecaBanner');
 
-                const estadoSolicitado = datos.estado || 'pendiente';
-                estado.value = (!esSerie && estadoSolicitado === 'viendo')
-                    ? 'pendiente'
-                    : estadoSolicitado;
+        const portada = document.getElementById('bibliotecaPortada');
+        const portadaVacia = document.getElementById('bibliotecaPortadaVacia');
 
-                puntuacion.value = datos.puntuacion || '';
-                fechaInicio.value = datos.fechaInicio || '';
-                fechaFin.value = datos.fechaFin || '';
-                notas.value = datos.notas || '';
-                contador.textContent = notas.value.length;
+        const botonFavorito = document.getElementById('bibliotecaBotonFavorito');
+        const favoritoInput = document.getElementById('bibliotecaFavorito');
+        const textoFavorito = document.getElementById('bibliotecaEstadoFavorito');
 
-                banner.style.backgroundImage = datos.banner
-                    ? `url("${datos.banner}")`
-                    : 'none';
+        const opcionViendo = estado.querySelector('[data-solo-serie]');
 
-                if (datos.portada) {
-                    portada.src = datos.portada;
-                    portada.alt = 'Portada de ' + (datos.titulo || '');
-                    portada.hidden = false;
-                    portadaVacia.hidden = true;
-                } else {
-                    portada.removeAttribute('src');
-                    portada.alt = '';
-                    portada.hidden = true;
-                    portadaVacia.hidden = false;
-                }
+        const campoEpisodios = document.getElementById('campoEpisodiosVistos');
+        const episodiosVistos = document.getElementById('bibliotecaEpisodiosVistos');
+        const maxEpisodiosTexto = document.getElementById('bibliotecaMaxEpisodios');
 
-                actualizarFavorito(
-                    datos.favorito === '1' ||
-                    datos.favorito === 'true'
-                );
+        const formulario = document.getElementById('formularioBiblioteca');
 
-                modal.hidden = false;
-                document.body.style.overflow = 'hidden';
-            }
+        function actualizarFavorito(esFavorito) {
 
-            function cerrarModal() {
-                modal.hidden = true;
-                document.body.style.overflow = '';
-            }
+            favoritoInput.value = esFavorito ? '1' : '0';
 
-            document.addEventListener('click', function (event) {
-                const objetivo = event.target instanceof Element
-                    ? event.target
-                    : event.target.parentElement;
+            botonFavorito.classList.toggle('es-favorito', esFavorito);
 
-                if (!objetivo) return;
+            botonFavorito.setAttribute('aria-pressed', String(esFavorito));
 
-                const boton = objetivo.closest('[data-abrir-biblioteca]');
-
-                if (boton) {
-                    event.preventDefault();
-
-                    abrirModal({
-                        id: boton.dataset.id,
-                        titulo: boton.dataset.titulo,
-                        tipo: boton.dataset.tipo,
-                        estado: boton.dataset.estado,
-                        puntuacion: boton.dataset.puntuacion,
-                        fechaInicio: boton.dataset.fechaInicio,
-                        fechaFin: boton.dataset.fechaFin,
-                        notas: boton.dataset.notas,
-                        portada: boton.dataset.portada,
-                        banner: boton.dataset.banner,
-                        favorito: boton.dataset.favorito
-                    });
-
-                    return;
-                }
-
-                if (objetivo.closest('#bibliotecaBotonFavorito')) {
-                    actualizarFavorito(favoritoInput.value !== '1');
-                    return;
-                }
-
-                if (objetivo.closest('[data-cerrar-modal]')) {
-                    cerrarModal();
-                }
-            });
-
-            notas.addEventListener('input', function () {
-                contador.textContent = notas.value.length;
-            });
-
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape' && !modal.hidden) {
-                    cerrarModal();
-                }
-            });
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener(
-                'DOMContentLoaded',
-                inicializarModalBiblioteca,
-                { once: true }
+            botonFavorito.setAttribute(
+                'aria-label',
+                esFavorito ? 'Quitar de favoritos' : 'Añadir a favoritos'
             );
-        } else {
-            inicializarModalBiblioteca();
+
+            botonFavorito.title = esFavorito
+                ? 'Quitar de favoritos'
+                : 'Añadir a favoritos';
+
+            textoFavorito.hidden = !esFavorito;
         }
-    })();
+
+        function abrirModal(datos) {
+
+            idInput.value = datos.id || '';
+
+            titulo.textContent = datos.titulo || 'Mi biblioteca';
+            nombre.textContent = datos.titulo || '';
+
+            const esSerie = datos.tipo === 'serie';
+
+            tipoTexto.textContent = esSerie ? 'Serie' : 'Película';
+
+            // Estado "viendo" solamente para series
+            opcionViendo.hidden = !esSerie;
+            opcionViendo.disabled = !esSerie;
+
+            const estadoSolicitado = datos.estado || 'pendiente';
+
+            estado.value = (!esSerie && estadoSolicitado === 'viendo')
+                ? 'pendiente'
+                : estadoSolicitado;
+
+            // Episodios vistos: exclusivamente para series
+            campoEpisodios.hidden = !esSerie;
+            episodiosVistos.disabled = !esSerie;
+
+            const formularioGrid = document.querySelector('.biblioteca-form-grid');
+
+            if (datos.tipo === 'serie') {
+                formularioGrid.classList.remove('sin-episodios');
+            } else {
+                formularioGrid.classList.add('sin-episodios');
+            }
+
+            if (datos.tipo === 'serie') {
+                campoEpisodios.hidden = false;
+
+                episodiosVistos.disabled = false;
+                episodiosVistos.max = datos.maxEpisodios;
+                episodiosVistos.value = datos.episodiosVistos;
+
+                maxEpisodiosTexto.textContent =
+                    `${datos.maxEpisodios} episodios disponibles`;
+            } else {
+                campoEpisodios.hidden = true;
+                episodiosVistos.disabled = true;
+            }
+
+            if (esSerie) {
+
+                const maximo = Math.max(
+                    0,
+                    parseInt(datos.maxEpisodios, 10) || 0
+                );
+
+                episodiosVistos.min = 0;
+                episodiosVistos.max = maximo;
+
+                const vistos = Math.max(
+                    0,
+                    parseInt(datos.episodiosVistos, 10) || 0
+                );
+
+                episodiosVistos.value = Math.min(vistos, maximo);
+
+                maxEpisodiosTexto.textContent =
+                    maximo + (maximo === 1
+                        ? ' episodio disponible'
+                        : ' episodios disponibles');
+
+            } else {
+
+                episodiosVistos.value = 0;
+                episodiosVistos.max = 0;
+
+                maxEpisodiosTexto.textContent = '0 episodios disponibles';
+            }
+
+            puntuacion.value = datos.puntuacion || '';
+            fechaInicio.value = datos.fechaInicio || '';
+            fechaFin.value = datos.fechaFin || '';
+            notas.value = datos.notas || '';
+
+            contador.textContent = notas.value.length;
+
+            banner.style.backgroundImage = datos.banner
+                ? `url("${datos.banner}")`
+                : 'none';
+
+            if (datos.portada) {
+
+                portada.src = datos.portada;
+                portada.alt = 'Portada de ' + (datos.titulo || '');
+
+                portada.hidden = false;
+                portadaVacia.hidden = true;
+
+            } else {
+
+                portada.removeAttribute('src');
+                portada.alt = '';
+
+                portada.hidden = true;
+                portadaVacia.hidden = false;
+            }
+
+            actualizarFavorito(
+                datos.favorito === '1' ||
+                datos.favorito === 'true'
+            );
+
+            modal.hidden = false;
+
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModal() {
+
+            modal.hidden = true;
+
+            document.body.style.overflow = '';
+        }
+
+        // Abrir modal y gestionar sus botones
+        document.addEventListener('click', function (event) {
+
+            const objetivo = event.target instanceof Element
+                ? event.target
+                : event.target.parentElement;
+
+            if (!objetivo) return;
+
+            const boton = objetivo.closest('[data-abrir-biblioteca]');
+
+            if (boton) {
+
+                event.preventDefault();
+
+                abrirModal({
+                    id: boton.dataset.id,
+                    titulo: boton.dataset.titulo,
+                    tipo: boton.dataset.tipo,
+                    estado: boton.dataset.estado,
+                    puntuacion: boton.dataset.puntuacion,
+                    fechaInicio: boton.dataset.fechaInicio,
+                    fechaFin: boton.dataset.fechaFin,
+                    notas: boton.dataset.notas,
+                    portada: boton.dataset.portada,
+                    banner: boton.dataset.banner,
+                    favorito: boton.dataset.favorito,
+                    maxEpisodios: Number(boton.dataset.maxEpisodios || 0),
+                    episodiosVistos: Number(boton.dataset.episodiosVistos || 0)
+                });
+
+                return;
+            }
+
+            if (objetivo.closest('#bibliotecaBotonFavorito')) {
+
+                actualizarFavorito(favoritoInput.value !== '1');
+
+                return;
+            }
+
+            if (objetivo.closest('[data-cerrar-modal]')) {
+
+                cerrarModal();
+            }
+        });
+
+        // Contador de caracteres
+        notas.addEventListener('input', function () {
+
+            contador.textContent = notas.value.length;
+        });
+
+        // Limitar episodios vistos
+        episodiosVistos.addEventListener('input', function () {
+
+            const maximo = parseInt(this.max, 10) || 0;
+
+            if (this.value === '') return;
+
+            let valor = parseInt(this.value, 10);
+
+            if (valor < 0) valor = 0;
+            if (valor > maximo) valor = maximo;
+
+            this.value = valor;
+        });
+
+        // Validación antes de enviar
+        formulario.addEventListener('submit', function () {
+
+            if (episodiosVistos.disabled) return;
+
+            const maximo = parseInt(episodiosVistos.max, 10) || 0;
+
+            let valor = parseInt(episodiosVistos.value, 10);
+
+            if (isNaN(valor)) valor = 0;
+
+            valor = Math.max(0, Math.min(valor, maximo));
+
+            episodiosVistos.value = valor;
+        });
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', function (event) {
+
+            if (event.key === 'Escape' && !modal.hidden) {
+
+                cerrarModal();
+            }
+        });
+
+    }
+
+    if (document.readyState === 'loading') {
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            inicializarModalBiblioteca,
+            { once: true }
+        );
+
+    } else {
+
+        inicializarModalBiblioteca();
+    }
+
+})();
 </script>
+
+
