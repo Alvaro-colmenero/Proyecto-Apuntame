@@ -137,20 +137,59 @@
             if (carrusel.dataset.inicializado === '1') return;
             carrusel.dataset.inicializado = '1';
 
+            const seccion = carrusel.closest('.seccion-tendencias');
             const pista = carrusel.querySelector('.tarjetas-carrusel');
-            const anterior = carrusel.closest('.seccion-tendencias').querySelector('[data-carrusel-anterior]');
-            const siguiente = carrusel.closest('.seccion-tendencias').querySelector('[data-carrusel-siguiente]');
-            const indicadores = carrusel.closest('.seccion-tendencias').querySelector('[data-indicadores-tendencias]');
+            const anterior = seccion.querySelector('[data-carrusel-anterior]');
+            const siguiente = seccion.querySelector('[data-carrusel-siguiente]');
+            const indicadores = seccion.querySelector('[data-indicadores-tendencias]');
 
-            if (!pista) return;
+            if (!pista || !indicadores) return;
 
-            const tarjetas = Array.from(pista.children);
-            if (!tarjetas.length) return;
+            const originales = Array.from(pista.children);
+            const total = originales.length;
+
+            if (total < 2) return;
 
             let indice = 0;
             let temporizador = null;
+            let pausado = false;
+            let moviendo = false;
 
-            tarjetas.forEach(function (_, i) {
+            // Clonar tarjetas para crear el efecto infinito.
+            const clonesInicio = originales.map(function (tarjeta) {
+                const clon = tarjeta.cloneNode(true);
+                clon.setAttribute('aria-hidden', 'true');
+
+                clon.querySelectorAll('a, button, input, select, textarea').forEach(el => {
+                    el.setAttribute('tabindex', '-1');
+                });
+
+                return clon;
+            });
+
+            const clonesFinal = originales.map(function (tarjeta) {
+                const clon = tarjeta.cloneNode(true);
+                clon.setAttribute('aria-hidden', 'true');
+
+                clon.querySelectorAll('a, button, input, select, textarea').forEach(el => {
+                    el.setAttribute('tabindex', '-1');
+                });
+
+                return clon;
+            });
+
+            clonesFinal.reverse().forEach(clon => {
+                pista.insertBefore(clon, pista.firstChild);
+            });
+
+            clonesInicio.forEach(clon => pista.appendChild(clon));
+
+            const tarjetas = Array.from(pista.children);
+
+            // Crear indicadores.
+            indicadores.innerHTML = '';
+
+            originales.forEach(function (_, i) {
                 const punto = document.createElement('button');
                 punto.type = 'button';
                 punto.className = 'indicador-tendencias';
@@ -166,67 +205,83 @@
 
             const puntos = Array.from(indicadores.children);
 
-            function paso() {
-                if (tarjetas.length < 2) return 0;
-
-                const separacion = parseFloat(getComputedStyle(pista).gap) || 0;
-
-                return tarjetas[0].getBoundingClientRect().width + separacion;
+            function posicion(i) {
+                return tarjetas[i].offsetLeft - pista.offsetLeft;
             }
 
             function actualizarIndicadores() {
-                const maxScroll = carrusel.scrollWidth - carrusel.clientWidth;
-                const progreso = maxScroll > 0 ? carrusel.scrollLeft / maxScroll : 0;
-                const indice = Math.round(progreso * (indicadores.length - 1));
-                indicadores.forEach((indicador, i) => {
-                    indicador.classList.toggle('activo', i === indice);
+                const activo = ((indice % total) + total) % total;
+
+                puntos.forEach(function (punto, i) {
+                    punto.classList.toggle('activo', i === activo);
                 });
             }
 
             function irA(i) {
-                const distancia = paso();
-                if (!distancia) return;
-                indice = (i + tarjetas.length) % tarjetas.length;
-                carrusel.scrollTo({
-                    left: tarjetas[indice].offsetLeft - tarjetas[0].offsetLeft,
-                    behavior: 'smooth'
-                });
+                if (moviendo) return;
+
+                indice = i;
+                moviendo = true;
+
+                pista.style.transition = 'transform 0.5s ease';
+                pista.style.transform =
+                    `translateX(${-posicion(total + indice)}px)`;
 
                 actualizarIndicadores();
             }
 
             function mover(direccion) {
-                const distancia = paso();
-                if (!distancia) return;
+                if (moviendo) return;
 
-                const maximo = carrusel.scrollWidth - carrusel.clientWidth;
+                indice += direccion;
+                moviendo = true;
 
-                if (direccion > 0 && carrusel.scrollLeft >= maximo - 2) {
-                    carrusel.scrollTo({ left: 0, behavior: 'smooth' });
-                } else if (direccion < 0 && carrusel.scrollLeft <= 2) {
-                    carrusel.scrollTo({ left: maximo, behavior: 'smooth' });
-                } else {
-                    carrusel.scrollBy({
-                        left: distancia * direccion,
-                        behavior: 'smooth'
-                    });
-                }
+                pista.style.transition = 'transform 0.5s linear';
+                pista.style.transform =
+                    `translateX(${-posicion(total + indice)}px)`;
+
+                actualizarIndicadores();
             }
 
-            function iniciar() {
-                detener();
-                if (tarjetas.length > 1) {
-                    temporizador = setInterval(function () {
-                        mover(1);
-                    }, 4000);
+            // Posición inicial.
+            function inicializarPosicion() {
+                pista.style.transition = 'none';
+                pista.style.transform =
+                    `translateX(${-posicion(total)}px)`;
+
+                actualizarIndicadores();
+            }
+
+            // Gestionar el bucle infinito.
+            pista.addEventListener('transitionend', function (e) {
+                if (e.propertyName !== 'transform') return;
+
+                if (indice >= total) {
+                    indice = 0;
+                    inicializarPosicion();
                 }
+
+                if (indice < 0) {
+                    indice = total - 1;
+                    inicializarPosicion();
+                }
+
+                moviendo = false;
+                actualizarIndicadores();
+            });
+
+            // Reproducción automática.
+            function iniciar() {
+                if (temporizador || pausado || total < 2) return;
+
+                temporizador = setInterval(function () {
+                    mover(1);
+                }, 2000);
             }
 
             function detener() {
-                if (temporizador) {
-                    clearInterval(temporizador);
-                    temporizador = null;
-                }
+                clearInterval(temporizador);
+                temporizador = null;
             }
 
             function reiniciar() {
@@ -234,27 +289,32 @@
                 iniciar();
             }
 
-            anterior.addEventListener('click', function () {
-                mover(-1);
-                reiniciar();
+            // Botón anterior.
+            if (anterior) {
+                anterior.addEventListener('click', function () {
+                    mover(-1);
+                });
+            }
+
+            // Botón siguiente.
+            if (siguiente) {
+                siguiente.addEventListener('click', function () {
+                    mover(1);
+                });
+            }
+
+            // PAUSAR ÚNICAMENTE AL PASAR EL RATÓN SOBRE EL CARRUSEL.
+            carrusel.addEventListener('mouseenter', function () {
+                pausado = true;
+                detener();
             });
 
-            siguiente.addEventListener('click', function () {
-                mover(1);
-                reiniciar();
+            carrusel.addEventListener('mouseleave', function () {
+                pausado = false;
+                iniciar();
             });
 
-            carrusel.addEventListener('scroll', actualizarIndicadores, {
-                passive: true
-            });
-
-            carrusel.addEventListener('mouseenter', detener);
-            carrusel.addEventListener('mouseleave', iniciar);
-            carrusel.addEventListener('focusin', detener);
-            carrusel.addEventListener('focusout', iniciar);
-            carrusel.addEventListener('touchstart', detener, { passive: true });
-            carrusel.addEventListener('touchend', iniciar, { passive: true });
-
+            // Control de visibilidad de la pestaña.
             document.addEventListener('visibilitychange', function () {
                 if (document.hidden) {
                     detener();
@@ -263,7 +323,11 @@
                 }
             });
 
-            actualizarIndicadores();
+            // Recalcular posiciones al cambiar el tamaño.
+            window.addEventListener('resize', inicializarPosicion);
+
+            // Inicializar.
+            inicializarPosicion();
             iniciar();
         });
     });
