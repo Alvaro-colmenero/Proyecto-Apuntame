@@ -149,8 +149,10 @@
             const favoritoInput = document.getElementById('bibliotecaFavorito');
             const textoFavorito = document.getElementById('bibliotecaEstadoFavorito');
             const opcionViendo = estado.querySelector('[data-solo-serie]');
+
             //Función encargada de actualizar los favoritos de la librería. Para mejorar la visibilidad del código
             //la función se determina que se pasa un parámetro, pero este no es definido.
+
             function actualizarFavorito(esFavorito) {
                 favoritoInput.value = esFavorito ? '1' : '0';
                 botonFavorito.classList.toggle('es-favorito', esFavorito);
@@ -165,8 +167,10 @@
 
                 textoFavorito.hidden = !esFavorito;
             }
+
             //Función encargada de actualizar el modal, para mejorar la visibilidad del código
             //la función se determina que se pasa un parámetro, pero este no es definido.
+
             function abrirModal(datos) {
                 idInput.value = datos.id || '';
                 titulo.textContent = datos.titulo || 'Mi biblioteca';
@@ -197,6 +201,7 @@
 
                 //Si hay datos en la portada, se le asocia a la variable datos
                 //de lo contrario, se elimina el atributo src y no se muestra
+
                 if (datos.portada) {
                     portada.src = datos.portada;
                     portada.alt = 'Portada de ' + (datos.titulo || '');
@@ -209,8 +214,10 @@
                     portada.hidden = true;
                     portadaVacia.hidden = false;
                 }
+
                 //Se llama a la función "actualizarFavorito" pasándole los buleanos de si efectivamente,
                 //es un contenido marcado como favorito o no
+
                 actualizarFavorito(
                     datos.favorito === '1' ||
                     datos.favorito === 'true'
@@ -221,19 +228,32 @@
             }
 
             //Función encargada de cerrar el modal
+
             function cerrarModal() {
                 modal.hidden = true;
                 document.body.style.overflow = '';
             }
+
+            //Añane un listener para cada botón que se le haga click
 
             document.addEventListener('click', function (event) {
                 const objetivo = event.target instanceof Element
                     ? event.target
                     : event.target.parentElement;
 
+                //Se genera una variable que indica el objetivo,
+                //En el caso en el que no se haya detectado ninguno
+                //Se para la ejecución del método
+
                 if (!objetivo) return;
 
+                //Genera una variable que analiza el css y detecta si al elemento que
+                //se le ha hecho click, se corresponte a data-abrir-biblioteca
+
                 const boton = objetivo.closest('[data-abrir-biblioteca]');
+
+                //En el caso en el que se haya detectado el botón se ejecuta
+                // el modal llamando a la función "abrirModal"
 
                 if (boton) {
                     event.preventDefault();
@@ -255,10 +275,15 @@
                     return;
                 }
 
+                //Si el objetivo resulta ser el botón de favoritos, se llama a la función,
+                // comprobando antes que tenga la id "bibliotecaBotonFavorito".
+
                 if (objetivo.closest('#bibliotecaBotonFavorito')) {
                     actualizarFavorito(favoritoInput.value !== '1');
                     return;
                 }
+
+                //Si el objetivo tiene el css de "data-cerrar-modal", se cierra
 
                 if (objetivo.closest('[data-cerrar-modal]')) {
                     cerrarModal();
@@ -268,6 +293,9 @@
             notas.addEventListener('input', function () {
                 contador.textContent = notas.value.length;
             });
+
+            //En el caso que se haya presionado la tecla de escape,
+            //Se cierra automáticamente el modal.
 
             document.addEventListener('keydown', function (event) {
                 if (event.key === 'Escape' && !modal.hidden) {
