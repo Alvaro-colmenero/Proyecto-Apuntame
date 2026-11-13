@@ -8,6 +8,52 @@
         $nombrePerfil = $usuarioPerfil->nombre ?? 'Usuario';
         $contenidosPerfil = collect($contenidosPerfil ?? []);
         $actividadPerfil = collect($actividadPerfil ?? []);
+
+        $totalBiblioteca = max(0, (int) $estadisticas['total_contenidos']);
+        $totalPeliculas = (int) $estadisticas['total_peliculas'];
+        $totalSeries = (int) $estadisticas['total_series'];
+        $peliculasVistas = (int) $estadisticas['peliculas_vistas'];
+        $episodiosVistos = (int) $estadisticas['episodios_vistos'];
+        $porcentajePeliculas = $totalBiblioteca > 0 ? round(($totalPeliculas / $totalBiblioteca) * 100) : 0;
+
+        $porcentajeSeries = $totalBiblioteca > 0 ? round(($totalSeries / $totalBiblioteca) * 100) : 0;
+
+        $totalEstados = $estadisticas['estados']->sum('total');
+
+        $nombresEstados = [
+            'pendiente' => 'Pendientes',
+            'viendo' => 'Viendo',
+            'vista' => 'Vistas',
+            'pausada' => 'Pausadas',
+            'abandonada' => 'Abandonadas',
+            ];
+
+        $coloresEstados = [
+            'pendiente' => '#e9b44c',
+            'viendo' => '#6685e8',
+            'vista' => '#35c99a',
+            'pausada' => '#b17be8',
+            'abandonada' => '#e56b75',
+        ];
+
+        $datosEstados = [];
+
+        foreach ($nombresEstados as $clave => $nombre) {
+                 $cantidad = (int) (
+                 $estadisticas['estados']->firstWhere('estado', $clave)?->total ?? 0);
+
+                 $datosEstados[] = [
+                    'nombre' => $nombre,
+                    'cantidad' => $cantidad,
+                    'color' => $coloresEstados[$clave],
+                    ];
+                 }
+
+        $circunferencia = 2 * pi() * 43;
+        $longitudPeliculas = $totalBiblioteca > 0 ? ($totalPeliculas / $totalBiblioteca) * $circunferencia : 0;
+        $longitudSeries = $totalBiblioteca > 0 ? ($totalSeries / $totalBiblioteca) * $circunferencia : 0;
+        $offsetSeries = -$longitudPeliculas;
+        $totalEstadosGrafico = max(1, $totalEstados);$offsetEstado = 0;
     @endphp
 
     <link rel="stylesheet" href="{{ asset('css/perfil.css') }}">
@@ -246,11 +292,12 @@
                     </section>
                 </section>
 
-                
+
                 {{-- ESTADÍSTICAS --}}
+
                 <section class="perfil-vista" data-vista="estadisticas" hidden>
 
-                    <section class="perfil-panel">
+                    <section>
 
                         <div class="perfil-panel-titulo">
                             <div>
@@ -258,188 +305,373 @@
                                 <h2>Mis estadísticas</h2>
                                 <p>Descubre cuánto cine y televisión has disfrutado.</p>
                             </div>
+
                             <span class="perfil-panel-icono">▥</span>
                         </div>
 
-                        {{-- TARJETAS PRINCIPALES --}}
                         <div class="estadisticas-resumen">
 
-                            <article class="estadistica-tarjeta">
+                            <article class="estadistica-tarjeta peliculas">
+                                <span class="estadistica-tarjeta-icono">🎬</span>
                                 <span>Películas en biblioteca</span>
-                                <strong>{{ $estadisticas['total_peliculas'] }}</strong>
+                                <strong>{{ number_format($totalPeliculas, 0, ',', '.') }}</strong>
                                 <small>Películas guardadas</small>
                             </article>
 
-                            <article class="estadistica-tarjeta">
+                            <article class="estadistica-tarjeta series">
+                                <span class="estadistica-tarjeta-icono">📺</span>
                                 <span>Series en biblioteca</span>
-                                <strong>{{ $estadisticas['total_series'] }}</strong>
+                                <strong>{{ number_format($totalSeries, 0, ',', '.') }}</strong>
                                 <small>Series guardadas</small>
                             </article>
 
-                            <article class="estadistica-tarjeta">
+                            <article class="estadistica-tarjeta vistas">
+                                <span class="estadistica-tarjeta-icono">🍿</span>
                                 <span>Películas vistas</span>
-                                <strong>{{ $estadisticas['peliculas_vistas'] }}</strong>
+                                <strong>{{ number_format($peliculasVistas, 0, ',', '.') }}</strong>
                                 <small>Películas finalizadas</small>
                             </article>
 
-                            <article class="estadistica-tarjeta">
+                            <article class="estadistica-tarjeta episodios">
+                                <span class="estadistica-tarjeta-icono">▶</span>
                                 <span>Episodios vistos</span>
-                                <strong>{{ $estadisticas['episodios_vistos'] }}</strong>
+                                <strong>{{ number_format($episodiosVistos, 0, ',', '.') }}</strong>
                                 <small>Registrados en tu biblioteca</small>
                             </article>
 
                         </div>
 
-                        {{-- TIEMPO DE VISUALIZACIÓN --}}
                         <section class="estadistica-bloque">
 
                             <div class="estadistica-titulo">
-                                <h3>Tiempo de visualización</h3>
-                                <p>Tiempo acumulado de películas y episodios vistos.</p>
+                                <h3>⏱ Tiempo de visualización</h3>
+                                <p>Todo el tiempo que has dedicado al entretenimiento.</p>
                             </div>
 
                             <div class="estadistica-tiempo">
+
                                 <div>
-                                    <strong>{{ number_format($estadisticas['dias_vistos'], 2, ',', '.') }}</strong>
+                                    <strong>
+                                        {{ number_format($estadisticas['dias_vistos'], 2, ',', '.') }}
+                                    </strong>
                                     <span>Días</span>
                                 </div>
 
                                 <div>
-                                    <strong>{{ number_format($estadisticas['horas_vistas'], 1, ',', '.') }}</strong>
+                                    <strong>
+                                        {{ number_format($estadisticas['horas_vistas'], 1, ',', '.') }}
+                                    </strong>
                                     <span>Horas</span>
                                 </div>
 
                                 <div>
-                                    <strong>{{ number_format($estadisticas['minutos_vistos'], 0, ',', '.') }}</strong>
+                                    <strong>
+                                        {{ number_format($estadisticas['minutos_vistos'], 0, ',', '.') }}
+                                    </strong>
                                     <span>Minutos</span>
                                 </div>
-                            </div>
-
-                        </section>
-
-                        {{-- GRÁFICO DE PELÍCULAS Y SERIES --}}
-                        <section class="estadistica-bloque">
-
-                            <div class="estadistica-titulo">
-                                <h3>Composición de tu biblioteca</h3>
-                                <p>Comparación entre películas y series.</p>
-                            </div>
-
-                            @php
-                                $totalBiblioteca = max(1, $estadisticas['total_contenidos']);
-                                $porcentajePeliculas = round(
-                                    $estadisticas['total_peliculas'] / $totalBiblioteca * 100
-                                );
-                                $porcentajeSeries = round(
-                                    $estadisticas['total_series'] / $totalBiblioteca * 100
-                                );
-                            @endphp
-
-                            <div class="estadistica-grafico-barras">
-
-                                <div class="estadistica-barra-item">
-                                    <div class="estadistica-barra-info">
-                                        <span>Películas</span>
-                                        <strong>{{ $estadisticas['total_peliculas'] }} ({{ $porcentajePeliculas }}%)</strong>
-                                    </div>
-                                    <div class="estadistica-barra-fondo">
-                                        <div class="estadistica-barra pelicula"
-                                            style="width: {{ $porcentajePeliculas }}%"></div>
-                                    </div>
-                                </div>
-
-                                <div class="estadistica-barra-item">
-                                    <div class="estadistica-barra-info">
-                                        <span>Series</span>
-                                        <strong>{{ $estadisticas['total_series'] }} ({{ $porcentajeSeries }}%)</strong>
-                                    </div>
-                                    <div class="estadistica-barra-fondo">
-                                        <div class="estadistica-barra serie"
-                                            style="width: {{ $porcentajeSeries }}%"></div>
-                                    </div>
-                                </div>
 
                             </div>
 
                         </section>
 
-                        {{-- GÉNEROS MÁS VISTOS --}}
                         <section class="estadistica-bloque">
 
                             <div class="estadistica-titulo">
-                                <h3>Tus géneros favoritos</h3>
-                                <p>Géneros de películas vistas y series con episodios vistos.</p>
+                                <h3>📊 Tu biblioteca visual</h3>
+                                <p>Una visión general de tus contenidos.</p>
+                            </div>
+
+                            <div class="estadistica-graficos-grid">
+
+                                <div class="estadistica-grafico-panel">
+                                    <h4>Composición de tu biblioteca</h4>
+                                    <p>Películas frente a series.</p>
+
+                                    @if($totalBiblioteca > 0)
+
+                                        <div class="estadistica-donut-contenedor">
+
+                                            <div class="estadistica-donut">
+
+                                                <svg viewBox="0 0 100 100" role="img" aria-label="Distribución de películas y series">
+
+                                                    <circle class="estadistica-donut-circulo estadistica-donut-fondo" cx="50" cy="50" r="43"/>
+                                                    <circle class="estadistica-donut-segmento" cx="50" cy="50" r="43" stroke="#e63963" stroke-dasharray="{{ $longitudPeliculas }} {{ $circunferencia }}" stroke-dashoffset="0"/>
+                                                    <circle class="estadistica-donut-segmento" cx="50" cy="50" r="43" stroke="#6685e8" stroke-dasharray="{{ $longitudSeries }} {{ $circunferencia }}" stroke-dashoffset="{{ $offsetSeries }}"/>
+
+                                                </svg>
+
+                                                <div class="estadistica-donut-centro">
+                                                    <strong>{{ $totalBiblioteca }}</strong>
+                                                    <span>Contenidos</span>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="estadistica-leyenda">
+
+                                                <div class="estadistica-leyenda-item">
+
+                                    <span class="estadistica-punto-color" style="background:#e63963"></span>
+                                                    <div>
+                                                        Películas
+                                                        <strong>
+                                                            {{ $totalPeliculas }}
+                                                            ({{ $porcentajePeliculas }}%)
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                                <div class="estadistica-leyenda-item">
+                                    <span class="estadistica-punto-color"
+                                          style="background:#6685e8"></span>
+                                                    <div>
+                                                        Series
+                                                        <strong>
+                                                            {{ $totalSeries }}
+                                                            ({{ $porcentajeSeries }}%)
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    @else
+                                        <p class="estadistica-vacia">
+                                            Todavía no tienes contenidos en tu biblioteca.
+                                        </p>
+                                    @endif
+                                </div>
+
+
+                                {{-- GRÁFICO DE BARRAS --}}
+
+                                <div class="estadistica-grafico-panel">
+                                    <h4>Contenido guardado</h4>
+                                    <p>Comparación por cantidad de contenidos.</p>
+                                    <div class="estadistica-grafico-barras">
+                                        <div class="estadistica-barra-item">
+                                            <div class="estadistica-barra-info">
+                                                <span>🎬 Películas</span>
+                                                <strong>
+                                                    {{ $totalPeliculas }}
+                                                    ({{ $porcentajePeliculas }}%)
+                                                </strong>
+                                            </div>
+                                            <div class="estadistica-barra-fondo">
+                                                <div
+                                                    class="estadistica-barra pelicula"
+                                                    style="width: {{ $porcentajePeliculas }}%">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="estadistica-barra-item">
+                                            <div class="estadistica-barra-info">
+                                                <span>📺 Series</span>
+                                                <strong>
+                                                    {{ $totalSeries }}
+                                                    ({{ $porcentajeSeries }}%)
+                                                </strong>
+                                            </div>
+                                            <div class="estadistica-barra-fondo">
+                                                <div
+                                                    class="estadistica-barra serie"
+                                                    style="width: {{ $porcentajeSeries }}%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="estadistica-bloque">
+                            <div class="estadistica-titulo">
+                                <h3>💜 Tus géneros favoritos</h3>
+                                <p>
+                                    Géneros de películas vistas y series con episodios vistos.
+                                </p>
                             </div>
 
                             @if($estadisticas['generos']->isNotEmpty())
 
-                                <div class="estadistica-generos">
+                                <div class="estadistica-graficos-grid">
 
-                                    @foreach($estadisticas['generos'] as $genero)
-                                        <div class="estadistica-barra-item">
+                                    {{-- BARRAS DE GÉNEROS --}}
 
-                                            <div class="estadistica-barra-info">
-                                                <span>{{ $genero->nombre }}</span>
-                                                <strong>{{ $genero->total }} contenidos</strong>
+                                    <div class="estadistica-grafico-panel">
+                                        <h4>Distribución por género</h4>
+                                        <p>Los géneros que más aparecen en tus contenidos vistos.</p>
+                                        <div class="estadistica-generos">
+
+                                            @foreach($estadisticas['generos'] as $genero)
+                                                @php
+                                                    $porcentajeGenero = $estadisticas['max_genero'] > 0 ? round(($genero->total / $estadisticas['max_genero']) * 100) : 0;
+                                                @endphp
+
+                                                <div class="estadistica-barra-item">
+                                                    <div class="estadistica-barra-info">
+                                                        <span>{{ $genero->nombre }}</span>
+                                                        <strong>{{ $genero->total }} contenidos</strong>
+                                                    </div>
+
+                                                    <div class="estadistica-barra-fondo">
+                                                        <div
+                                                            class="estadistica-barra genero"
+                                                            style="width: {{ $porcentajeGenero }}%">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+                                    @php
+                                        $generoFavorito = $estadisticas['generos']->first();
+                                    @endphp
+
+                                    <div class="estadistica-grafico-panel">
+
+                                        <h4>Tu género más popular</h4>
+                                        <p>El género que más has disfrutado.</p>
+                                        <div class="estadistica-donut-contenedor">
+                                            <div class="estadistica-donut">
+
+                                                <svg viewBox="0 0 100 100">
+                                                    <circle class="estadistica-donut-circulo estadistica-donut-fondo" cx="50" cy="50" r="43"/>
+                                                    <circle class="estadistica-donut-segmento" cx="50" cy="50" r="43" stroke="#b17be8" stroke-dasharray="{{ ($generoFavorito->total / max(1, $estadisticas['generos']->sum('total'))) * $circunferencia }} {{ $circunferencia }}"/>
+
+                                                </svg>
+
+                                                <div class="estadistica-donut-centro">
+                                                    <strong>{{ $generoFavorito->total }}</strong>
+                                                    <span>Contenidos</span>
+                                                </div>
+
                                             </div>
+                                            <div class="estadistica-leyenda"><div class="estadistica-leyenda-item">
+                                    <span class="estadistica-punto-color" style="background:#b17be8"></span>
 
-                                            <div class="estadistica-barra-fondo">
-                                                <div class="estadistica-barra genero"
-                                                    style="width: {{ ($genero->total / $estadisticas['max_genero']) * 100 }}%">
+                                                    <div>
+                                                        Tu favorito
+                                                        <strong>{{ $generoFavorito->nombre }}</strong>
+                                                    </div>
                                                 </div>
                                             </div>
-
                                         </div>
-                                    @endforeach
-
+                                    </div>
                                 </div>
 
                             @else
+
                                 <p class="estadistica-vacia">
                                     Todavía no hay suficientes contenidos vistos para mostrar tus géneros.
                                 </p>
+
                             @endif
 
                         </section>
 
-                        {{-- ESTADOS --}}
                         <section class="estadistica-bloque">
 
                             <div class="estadistica-titulo">
-                                <h3>Estado de mi biblioteca</h3>
+                                <h3>📁 Estado de mi biblioteca</h3>
                                 <p>Cómo tienes organizados tus contenidos.</p>
                             </div>
 
-                            <div class="estadistica-estados">
+                            <div class="estadistica-graficos-grid">
 
-                                @php
-                                    $nombresEstados = [
-                                        'pendiente' => 'Pendientes',
-                                        'viendo' => 'Viendo',
-                                        'vista' => 'Vistas',
-                                        'pausada' => 'Pausadas',
-                                        'abandonada' => 'Abandonadas',
-                                    ];
-                                @endphp
+                                {{-- GRÁFICO CIRCULAR DE ESTADOS --}}
 
-                                @foreach($nombresEstados as $clave => $nombre)
-                                    @php
-                                        $cantidad = $estadisticas['estados']
-                                            ->firstWhere('estado', $clave)?->total ?? 0;
-                                    @endphp
+                                <div class="estadistica-grafico-panel">
+                                    <h4>Distribución de estados</h4>
+                                    <p>Porcentaje de contenidos en cada situación.</p>
 
-                                    <div class="estadistica-estado">
-                                        <span>{{ $nombre }}</span>
-                                        <strong>{{ $cantidad }}</strong>
+                                    @if($totalEstados > 0)
+
+                                        <div class="estadistica-donut-contenedor">
+                                            <div class="estadistica-donut">
+                                                <svg viewBox="0 0 100 100">
+
+                                                    <circle class="estadistica-donut-circulo estadistica-donut-fondo" cx="50" cy="50" r="43"/>
+
+                                                    @foreach($datosEstados as $estado)
+
+                                                        @php
+                                                            $longitudEstado = ( $estado['cantidad'] / $totalEstadosGrafico ) * $circunferencia;
+                                                        @endphp
+
+                                                        @if($estado['cantidad'] > 0)
+
+                                                            <circle class="estadistica-donut-segmento" cx="50" cy="50" r="43" stroke="{{ $estado['color'] }}" stroke-dasharray="{{ $longitudEstado }} {{ $circunferencia }}" stroke-dashoffset="{{ -$offsetEstado }}"/>
+
+                                                        @endif
+
+                                                        @php
+                                                            $offsetEstado += $longitudEstado;
+                                                        @endphp
+
+                                                    @endforeach
+
+                                                </svg>
+
+                                                <div class="estadistica-donut-centro">
+                                                    <strong>{{ $totalEstados }}</strong>
+                                                    <span>Contenidos</span>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="estadistica-leyenda">
+                                                @foreach($datosEstados as $estado)
+                                            <div class="estadistica-leyenda-item">
+
+                                        <span
+                                            class="estadistica-punto-color"
+                                            style="background:{{ $estado['color'] }}">
+                                        </span>
+                                                        <div>
+                                                            {{ $estado['nombre'] }}
+                                                            <strong>
+                                                                {{ $estado['cantidad'] }}
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+
+                                    @else
+                                        <p class="estadistica-vacia">
+                                            Todavía no tienes contenidos clasificados por estado.
+                                        </p>
+                                    @endif
+
+                                </div>
+
+                                <div class="estadistica-grafico-panel">
+                                    <h4>Resumen de estados</h4>
+                                    <p>Todos tus contenidos organizados.</p>
+                                    <div class="estadistica-estados">
+                                        @foreach($datosEstados as $estado)
+
+                                            <div class="estadistica-estado">
+
+                                                <span>{{ $estado['nombre'] }}</span>
+
+                                                <strong>
+                                                    {{ $estado['cantidad'] }}
+                                                </strong>
+                                            </div>
+                                        @endforeach
                                     </div>
-                                @endforeach
-
+                                </div>
                             </div>
-
                         </section>
-
                     </section>
-
                 </section>
 
 
