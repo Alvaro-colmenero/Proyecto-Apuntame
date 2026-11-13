@@ -100,7 +100,7 @@ class PerfilController extends Controller
                 'abandonada' => 'Abandonadas',
             ];
 
-        
+
         // =========================================
         // ESTADÍSTICAS DE LA BIBLIOTECA
         // =========================================
@@ -229,7 +229,7 @@ class PerfilController extends Controller
             'favoritosPerfil' => $favoritosPerfil,
             'estadosBiblioteca' => $estadosBiblioteca,
             'estadisticas' => $estadisticas,
-            
+
         ]);
 
     }
@@ -289,7 +289,7 @@ class PerfilController extends Controller
     }
 
 
-    
+
     private function obtenerBibliotecaPorTipo(int $usuarioId, string $tipo)
     {
         return DB::table('biblioteca')

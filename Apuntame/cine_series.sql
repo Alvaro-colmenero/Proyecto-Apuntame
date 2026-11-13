@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-11-2026 a las 12:20:57
+-- Tiempo de generación: 13-11-2026 a las 12:48:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -397,6 +397,44 @@ INSERT INTO `contenidos_generos` (`contenido_id`, `genero_id`) VALUES
 (75, 4),
 (75, 9),
 (75, 20);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `contenido_relaciones`
+--
+
+CREATE TABLE `contenido_relaciones` (
+  `id` int(11) NOT NULL,
+  `contenido_id` int(11) NOT NULL,
+  `relacionado_id` int(11) NOT NULL,
+  `tipo_relacion` enum('secuela','precuela','continuacion','temporada_anterior','temporada_siguiente','spin_off','remake','adaptacion','relacionado') NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `contenido_relaciones`
+--
+
+INSERT INTO `contenido_relaciones` (`id`, `contenido_id`, `relacionado_id`, `tipo_relacion`, `created_at`, `updated_at`) VALUES
+(1, 3, 38, 'secuela', NULL, NULL),
+(2, 38, 39, 'secuela', NULL, NULL),
+(3, 6, 33, 'secuela', NULL, NULL),
+(4, 33, 35, 'secuela', NULL, NULL),
+(5, 41, 42, 'secuela', NULL, NULL),
+(6, 42, 43, 'secuela', NULL, NULL),
+(7, 4, 44, 'secuela', NULL, NULL),
+(8, 44, 45, 'secuela', NULL, NULL),
+(9, 45, 46, 'secuela', NULL, NULL),
+(10, 18, 47, 'secuela', NULL, NULL),
+(11, 47, 48, 'secuela', NULL, NULL),
+(12, 13, 36, 'secuela', NULL, NULL),
+(13, 62, 63, 'secuela', NULL, NULL),
+(14, 63, 64, 'secuela', NULL, NULL),
+(15, 64, 65, 'secuela', NULL, NULL),
+(16, 23, 7, 'precuela', NULL, NULL),
+(17, 10, 34, 'secuela', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -798,7 +836,21 @@ INSERT INTO `episodios_vistos` (`usuario_id`, `episodio_id`, `fecha_visto`) VALU
 (5, 19, '2026-11-06 10:55:45'),
 (5, 20, '2026-11-06 10:55:45'),
 (5, 21, '2026-11-06 10:55:45'),
-(5, 22, '2026-11-06 10:55:45');
+(5, 22, '2026-11-06 10:55:45'),
+(5, 152, '2026-11-06 11:33:34'),
+(5, 153, '2026-11-06 11:33:34'),
+(5, 154, '2026-11-06 11:33:34'),
+(5, 155, '2026-11-06 11:33:34'),
+(5, 156, '2026-11-06 11:33:28'),
+(5, 157, '2026-11-06 11:33:28'),
+(5, 158, '2026-11-06 11:33:28'),
+(5, 159, '2026-11-06 11:33:28'),
+(5, 160, '2026-11-06 11:33:28'),
+(5, 161, '2026-11-06 11:33:28'),
+(5, 162, '2026-11-06 11:33:28'),
+(5, 163, '2026-11-06 11:33:28'),
+(5, 164, '2026-11-06 11:33:28'),
+(5, 165, '2026-11-06 11:33:28');
 
 -- --------------------------------------------------------
 
@@ -953,6 +1005,15 @@ ALTER TABLE `contenidos_generos`
   ADD KEY `genero_id` (`genero_id`);
 
 --
+-- Indices de la tabla `contenido_relaciones`
+--
+ALTER TABLE `contenido_relaciones`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `contenido_relacion_unica` (`contenido_id`,`relacionado_id`),
+  ADD KEY `idx_tipo_relacion` (`tipo_relacion`),
+  ADD KEY `fk_relacionado_contenido` (`relacionado_id`);
+
+--
 -- Indices de la tabla `episodios`
 --
 ALTER TABLE `episodios`
@@ -1005,10 +1066,16 @@ ALTER TABLE `contenidos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
+-- AUTO_INCREMENT de la tabla `contenido_relaciones`
+--
+ALTER TABLE `contenido_relaciones`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
 -- AUTO_INCREMENT de la tabla `episodios`
 --
 ALTER TABLE `episodios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=530;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=363;
 
 --
 -- AUTO_INCREMENT de la tabla `generos`
@@ -1020,7 +1087,7 @@ ALTER TABLE `generos`
 -- AUTO_INCREMENT de la tabla `temporadas`
 --
 ALTER TABLE `temporadas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -1052,6 +1119,13 @@ ALTER TABLE `biblioteca`
 ALTER TABLE `contenidos_generos`
   ADD CONSTRAINT `contenidos_generos_ibfk_1` FOREIGN KEY (`contenido_id`) REFERENCES `contenidos` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `contenidos_generos_ibfk_2` FOREIGN KEY (`genero_id`) REFERENCES `generos` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `contenido_relaciones`
+--
+ALTER TABLE `contenido_relaciones`
+  ADD CONSTRAINT `fk_relacion_contenido` FOREIGN KEY (`contenido_id`) REFERENCES `contenidos` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_relacionado_contenido` FOREIGN KEY (`relacionado_id`) REFERENCES `contenidos` (`id`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `episodios`

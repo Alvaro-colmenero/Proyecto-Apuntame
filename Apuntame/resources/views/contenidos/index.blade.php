@@ -69,6 +69,93 @@
 
     @else
 
+        {{-- BANNER PRINCIPAL --}}
+        @php
+            $banners = $contenidos->getCollection()
+                ->filter(function ($contenido) {
+                    return !empty($contenido->banner);
+                })
+                ->shuffle()
+                ->take(4)
+                ->values();
+        @endphp
+
+        @if ($banners->isNotEmpty())
+            <section class="hero-banners" data-hero-banners>
+
+                <div class="hero-pista">
+                    @foreach ($banners as $i => $contenido)
+                        <article class="hero-slide {{ $i === 0 ? 'activo' : '' }}" style="--hero-image: url('{{ asset($contenido->banner) }}')" aria-hidden="{{ $i === 0 ? 'false' : 'true' }}">
+                            <div class="hero-contenido">
+
+                        <span class="hero-etiqueta">
+                            {{ $contenido->tipo === 'serie' ? 'SERIE DESTACADA' : 'PELÍCULA DESTACADA' }}
+                        </span>
+
+                                <h1>{{ $contenido->titulo }}</h1>
+
+                                <div class="hero-metadatos">
+                                    @if ($contenido->fecha_estreno)
+                                        <span>{{ \Carbon\Carbon::parse($contenido->fecha_estreno)->format('Y') }}</span>
+                                    @endif
+
+                                    <span>{{ $contenido->tipo === 'serie' ? 'Serie' : 'Película' }}</span>
+
+                                    @if ($contenido->tipo === 'serie' && $contenido->estado_serie)
+                                        <span>
+                                    {{ $contenido->estado_serie === 'en_emision' ? 'En emisión' : ($contenido->estado_serie === 'finalizada' ? 'Finalizada' : '') }}
+                                </span>
+                                    @elseif ($contenido->tipo === 'pelicula' && $contenido->duracion)
+                                        <span>{{ $contenido->duracion }} min</span>
+                                    @endif
+                                </div>
+
+                                <p class="hero-descripcion">
+                                    {{ $contenido->descripcion }}
+                                </p>
+
+                                @if ($contenido->generos->isNotEmpty())
+                                    <div class="hero-generos">
+                                        @foreach ($contenido->generos->take(3) as $genero)
+                                            <span>{{ $genero->nombre }}</span>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <a href="{{ route('contenidos.show', $contenido->id) }}"
+                                   class="hero-boton">
+                                    <span>▶</span> Ver detalles
+                                </a>
+
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+
+                @if ($banners->count() > 1)
+                    <button type="button" class="hero-flecha hero-anterior" aria-label="Banner anterior">
+                        &#10094;
+                    </button>
+
+                    <button type="button" class="hero-flecha hero-siguiente" aria-label="Banner siguiente">
+                        &#10095;
+                    </button>
+
+                    <div class="hero-indicadores">
+                        @foreach ($banners as $i => $contenido)
+                            <button type="button"
+                                    class="hero-indicador {{ $i === 0 ? 'activo' : '' }}"
+                                    data-hero-ir="{{ $i }}"
+                                    aria-label="Mostrar banner {{ $i + 1 }}">
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
+            </section>
+        @endif
+
+
         {{-- CARRUSEL DE TENDENCIAS --}}
         @php
             $tendencias = $contenidos->getCollection()
@@ -330,6 +417,85 @@
             inicializarPosicion();
             iniciar();
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const hero = document.querySelector('.hero-banners');
+
+        if (!hero) return;
+
+        const slides = Array.from(hero.querySelectorAll('.hero-slide'));
+        const indicadores = Array.from(hero.querySelectorAll('.hero-indicador'));
+        const anterior = hero.querySelector('.hero-anterior');
+        const siguiente = hero.querySelector('.hero-siguiente');
+
+        if (slides.length === 0) return;
+
+        let indice = slides.findIndex(slide => slide.classList.contains('activo'));
+        if (indice < 0) indice = 0;
+
+        let temporizador;
+
+        function mostrar(nuevoIndice) {
+
+            indice = (nuevoIndice + slides.length) % slides.length;
+
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('activo', i === indice);
+            });
+
+            indicadores.forEach((punto, i) => {
+                punto.classList.toggle('activo', i === indice);
+            });
+        }
+
+        function avanzar() {
+            mostrar(indice + 1);
+        }
+
+        function iniciar() {
+            detener();
+
+            if (slides.length > 1) {
+                temporizador = setInterval(avanzar, 6000);
+            }
+        }
+
+        function detener() {
+            clearInterval(temporizador);
+        }
+
+        if (anterior) {
+            anterior.addEventListener('click', function (e) {
+                e.preventDefault();
+                mostrar(indice - 1);
+                iniciar();
+            });
+        }
+
+        if (siguiente) {
+            siguiente.addEventListener('click', function (e) {
+                e.preventDefault();
+                mostrar(indice + 1);
+                iniciar();
+            });
+        }
+
+        indicadores.forEach((punto, i) => {
+            punto.addEventListener('click', function (e) {
+                e.preventDefault();
+                mostrar(i);
+                iniciar();
+            });
+        });
+
+        hero.addEventListener('mouseenter', detener);
+        hero.addEventListener('mouseleave', iniciar);
+
+        mostrar(indice);
+        iniciar();
+
     });
 
 </script>
