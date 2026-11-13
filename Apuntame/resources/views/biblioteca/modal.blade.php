@@ -1,4 +1,12 @@
-
+<!--
++-----------------------------------------+
+|¿Qué es esto?                       _ ▄ x|
++-----------------------------------------+
+|Es el registro del contenido, se muestra |
+|cuando haces click sobre el botón de     |
+|añadir a la lista.                       |
++-----------------------------------------+
+-->
 <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
 
 <div id="modalBiblioteca" class="modal-biblioteca" hidden>
@@ -15,6 +23,7 @@
         {{-- CABECERA: PÓSTER, FAVORITO E INFORMACIÓN --}}
         <div class="biblioteca-cabecera">
             <div class="biblioteca-portada-contenedor">
+                <!--Partiendo de la id de la biblioteca, se muestra la portada-->
                 <img id="bibliotecaPortada" class="biblioteca-portada" src="" alt="" hidden>
 
                 <div id="bibliotecaPortadaVacia" class="biblioteca-portada-vacia" hidden>
@@ -107,13 +116,22 @@
 </div>
 
 <script>
+    //+-----------------------------------------------+
+    //|¿Qué hace este script?                    _ ▄ x|
+    //+-----------------------------------------------+
+    //|Se pone en contacto con el modal de biblioteca.|
+    //|(app/Http/Controllers/BibliotecaController.php)|
+    //+-----------------------------------------------+
+
+    //Como el modal es una entidad, tan solo tiene una función, por eso se pone
+    // (function() {...}) ();
     (function () {
         function inicializarModalBiblioteca() {
             const modal = document.getElementById('modalBiblioteca');
 
             if (!modal || modal.dataset.inicializado) return;
             modal.dataset.inicializado = 'true';
-
+            //Recoge TODOS los datos presentes en los distintos elementos de esta página
             const idInput = document.getElementById('bibliotecaContenidoId');
             const titulo = document.getElementById('modalBibliotecaTitulo');
             const nombre = document.getElementById('modalBibliotecaNombre');
@@ -131,7 +149,8 @@
             const favoritoInput = document.getElementById('bibliotecaFavorito');
             const textoFavorito = document.getElementById('bibliotecaEstadoFavorito');
             const opcionViendo = estado.querySelector('[data-solo-serie]');
-
+            //Función encargada de actualizar los favoritos de la librería. Para mejorar la visibilidad del código
+            //la función se determina que se pasa un parámetro, pero este no es definido.
             function actualizarFavorito(esFavorito) {
                 favoritoInput.value = esFavorito ? '1' : '0';
                 botonFavorito.classList.toggle('es-favorito', esFavorito);
@@ -146,7 +165,8 @@
 
                 textoFavorito.hidden = !esFavorito;
             }
-
+            //Función encargada de actualizar el modal, para mejorar la visibilidad del código
+            //la función se determina que se pasa un parámetro, pero este no es definido.
             function abrirModal(datos) {
                 idInput.value = datos.id || '';
                 titulo.textContent = datos.titulo || 'Mi biblioteca';
@@ -169,22 +189,28 @@
                 notas.value = datos.notas || '';
                 contador.textContent = notas.value.length;
 
+                //Le asigna la imagen al banner
+
                 banner.style.backgroundImage = datos.banner
                     ? `url("${datos.banner}")`
                     : 'none';
 
+                //Si hay datos en la portada, se le asocia a la variable datos
+                //de lo contrario, se elimina el atributo src y no se muestra
                 if (datos.portada) {
                     portada.src = datos.portada;
                     portada.alt = 'Portada de ' + (datos.titulo || '');
                     portada.hidden = false;
                     portadaVacia.hidden = true;
                 } else {
+
                     portada.removeAttribute('src');
                     portada.alt = '';
                     portada.hidden = true;
                     portadaVacia.hidden = false;
                 }
-
+                //Se llama a la función "actualizarFavorito" pasándole los buleanos de si efectivamente,
+                //es un contenido marcado como favorito o no
                 actualizarFavorito(
                     datos.favorito === '1' ||
                     datos.favorito === 'true'
@@ -194,6 +220,7 @@
                 document.body.style.overflow = 'hidden';
             }
 
+            //Función encargada de cerrar el modal
             function cerrarModal() {
                 modal.hidden = true;
                 document.body.style.overflow = '';

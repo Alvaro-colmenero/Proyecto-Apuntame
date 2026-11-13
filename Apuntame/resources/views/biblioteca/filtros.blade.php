@@ -1,5 +1,14 @@
+<!--
++------------------------------+
+|¿Esto qué es?            _ ▄ x|
++------------------------------+
+|Esto es el buscador de perfil.|
++------------------------------+
+-->
 @php
+    //Junta películas y series en una misma lista para que la búsqueda sea mas rápida
     $todosLosContenidos = $contenidos->flatten(1);
+    //Recoge todos los géneros filtrándolo utilizando la variable contenidos
     $generosDisponibles = $todosLosContenidos
         ->flatMap(function ($contenido) {return explode('|', $contenido->generos ?? '');})
         ->filter()
@@ -16,6 +25,10 @@
         <h3>Filtrar colección</h3>
     </div>
 
+    <!--
+    Se encarga de buscar la película a través de su nombre,
+    se encarga de vincular explícitamente el texto de la etiqueta con el elemento del formulario
+    -->
     <div class="perfil-filtro-buscador">
         <label for="buscar-{{ $tipo }}">Buscar contenido</label>
         <input type="search" id="buscar-{{ $tipo }}" placeholder="Buscar por título..." data-filtro-busqueda>
@@ -28,7 +41,10 @@
             <input type="radio" name="estado-{{ $tipo }}" value="todos" checked data-filtro-estado>
             Todos
         </label>
-
+        <!--
+        Por cada estado que tenga la película, se introduce dentro de su respectivo apartado,
+        es un filtro
+        -->
         @foreach([
             'pendiente' => 'Mi lista',
             'viendo' => 'En curso',
@@ -45,6 +61,10 @@
         @endforeach
     </div>
 
+    <!--
+    Se encarga de filtrar el contenido de la biblioteca del usuario
+    de acuerdo con el género que se haya seleccionado
+    -->
     <div class="perfil-filtro-grupo">
         <h4>Géneros</h4>
 

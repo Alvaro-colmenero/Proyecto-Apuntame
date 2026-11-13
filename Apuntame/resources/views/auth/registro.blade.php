@@ -1,3 +1,10 @@
+<!--
++-----------------------------------------+
+|¿Qué es esto?                       _ ▄ x|
++-----------------------------------------+
+|Es la página encargada de crear la cuenta|
++-----------------------------------------+
+-->
 @extends('layouts.app')
 
 @section('title', 'Crear cuenta | Apuntame')
