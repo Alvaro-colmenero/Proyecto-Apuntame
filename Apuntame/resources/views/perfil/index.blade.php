@@ -1,3 +1,13 @@
+<!--
++---------------------------------------------------------------+
+|¿Esto qué es?                                             _ ▄ x|
++---------------------------------------------------------------+
+|Se trata de la página que el usuario verá sobre su información,|
+|en ella se mostrará todos sus datos: películas que ha visto,   |
+|tiempo de visualización total, su biblioteca personal, entre   |
+|otros datos.                                                   |
++---------------------------------------------------------------+
+-->
 @extends('layouts.app')
 @section('title', 'Mi perfil | Apuntame')
 @include('biblioteca.modal')

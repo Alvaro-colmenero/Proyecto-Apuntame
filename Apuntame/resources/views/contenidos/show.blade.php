@@ -1,15 +1,31 @@
+<!--
++-----------------------------------------------------------------------------+
+|¿Qué es esto?                                                           _ ▄ x|
++-----------------------------------------------------------------------------+
+|Esta es la página de cada película, por ahora tan solo se muetra información |
+|superficial de esta, se tiene pensado implementar más datos y incluso una    |
+|sección de comunidad y que se muestre el catálogo de recomendaciones.        |
++-----------------------------------------------------------------------------+
+-->
 @extends('layouts.app')
 @section('title', $contenido->titulo . ' | MiCineSeries')
 @section('content')
 @include('biblioteca.modal')
 
-
+    <!--
+    En la parte de arriba se crea un botón para que se de al usuario la opción para que regrese
+    a la página de donde biene.
+    -->
     <p>
         <a class="boton boton-secundario" href="{{ url()->previous() }}">
             ← Volver
         </a>
     </p>
 
+    <!--
+    Todo esto es la información que se encuentra en la parte superior de la página
+    incluyendo, el banner de la película, su portada, el título de esta y su información
+    -->
     <article class="detalle">
         <div class="banner" @if ($contenido->banner || $contenido->poster) style="background-image: url('{{ asset($contenido->banner ?: $contenido->poster) }}')" @endif>
         </div>
@@ -76,6 +92,10 @@
         </div>
     </article>
 
+    <!--
+    En el caso en el que se detecte que es una serie, se mostrará una lista por cada temporada que esta tenga
+    y los episodios que esta tiene.
+    -->
     @if ($contenido->tipo === 'serie')
         <section class="seccion">
             <div class="titulo-seccion">
