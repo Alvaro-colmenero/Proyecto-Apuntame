@@ -71,10 +71,6 @@
 
             <div class="perfil-portada-degradado"></div>
 
-            <div class="perfil-portada-etiqueta">
-                <span>✦</span> MI ESPACIO PERSONAL
-            </div>
-
             <div class="perfil-identidad">
 
                 <div class="perfil-avatar-contenedor">
