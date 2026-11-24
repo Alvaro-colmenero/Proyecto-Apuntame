@@ -137,6 +137,8 @@
       <path value="$PROJECT_DIR$/Apuntame/vendor/tijsverkoyen/css-to-inline-styles" />
       <path value="$PROJECT_DIR$/Apuntame/vendor/vlucas/phpdotenv" />
       <path value="$PROJECT_DIR$/Apuntame/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/Apuntame/vendor/symfony/polyfill-time" />
+      <path value="$PROJECT_DIR$/Apuntame/vendor/laravel/ui" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3">

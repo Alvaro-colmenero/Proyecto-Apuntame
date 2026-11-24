@@ -5,9 +5,8 @@
       <sourceFolder url="file://$MODULE_DIR$/Apuntame/app" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/Apuntame/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/Apuntame/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
+      <sourceFolder url="file://$MODULE_DIR$/Apuntame/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/Apuntame/tests" isTestSource="true" packagePrefix="Tests\" />
-      <sourceFolder url="file://$MODULE_DIR$/Apuntame/tests/Feature" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/Apuntame/tests/Unit" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/carbonphp/carbon-doctrine-types" />
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/composer" />
@@ -120,6 +119,9 @@
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/storage/app" />
       <excludeFolder url="file://$MODULE_DIR$/Apuntame/storage/framework" />
+      <excludeFolder url="file://$MODULE_DIR$/php" />
+      <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/symfony/polyfill-time" />
+      <excludeFolder url="file://$MODULE_DIR$/Apuntame/vendor/laravel/ui" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
