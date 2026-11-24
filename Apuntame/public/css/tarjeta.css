@@ -1,6 +1,11 @@
 
+/* TARJETAS CON BOTÓN DE LISTA */
+
 .tarjeta-con-boton {
     position: relative;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 8px;
 }
 
 .tarjeta-enlace {
@@ -10,49 +15,102 @@
     text-decoration: none;
 }
 
+/* BOTÓN AÑADIR A MI LISTA */
+
 .boton-lista-mini {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 9px;
+    right: 9px;
     z-index: 5;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
     padding: 0;
 
-    border: 1px solid rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, .25);
     border-radius: 50%;
 
-    background: rgba(15, 15, 15, 0.88);
+    background: rgba(8, 13, 19, .88);
     color: #fff;
 
-    font-size: 26px;
+    font-size: 23px;
     font-weight: 400;
     line-height: 1;
 
     cursor: pointer;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
     transition:
-        background 0.2s ease,
-        transform 0.2s ease;
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        transform .2s ease;
 }
 
 .boton-lista-mini:hover {
-    background: #e50914;
+    background: #25bfd0;
+    border-color: #25bfd0;
+    color: #071216;
     transform: scale(1.08);
 }
 
+.boton-lista-mini:active {
+    transform: scale(.94);
+}
+
 .boton-lista-mini:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid #25bfd0;
     outline-offset: 3px;
 }
+
+/* GÉNEROS */
 
 .tarjeta-generos {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 5px;
-    margin-top: 8px;
+    margin-top: 9px;
+}
+
+.tarjeta-generos span {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 7px;
+
+    background: #172b34;
+    border: 1px solid #263d47;
+    border-radius: 4px;
+
+    color: #9edce1;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* MÓVILES */
+
+@media (max-width: 650px) {
+    .boton-lista-mini {
+        top: 7px;
+        right: 7px;
+        width: 31px;
+        height: 31px;
+        font-size: 21px;
+    }
+
+    .tarjeta-generos {
+        gap: 4px;
+        margin-top: 7px;
+    }
+
+    .tarjeta-generos span {
+        padding: 3px 6px;
+        font-size: 9px;
+    }
 }

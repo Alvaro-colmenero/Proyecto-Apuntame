@@ -22,6 +22,7 @@ Route::middleware('guest')->group(function () {Route::get('/registro', [AuthCont
 // PERFIL
 Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
 Route::post('/biblioteca', [BibliotecaController::class, 'guardar'])->middleware('auth')->name('biblioteca.guardar');
+Route::get('/biblioteca', [BibliotecaController::class, 'index'])->name('biblioteca.index');
 Route::middleware('auth')->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     Route::put('/perfil', [PerfilController::class, 'actualizar'])->name('perfil.actualizar');

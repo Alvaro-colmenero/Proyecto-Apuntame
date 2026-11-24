@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Contenido extends Model
 {
     protected $table = 'contenidos';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -33,5 +34,29 @@ class Contenido extends Model
             'contenido_id',
             'genero_id'
         );
+    }
+
+    // Contenidos relacionados desde esta ficha.
+    public function relaciones()
+    {
+        return $this->belongsToMany(
+            Contenido::class,
+            'contenido_relaciones',
+            'contenido_id',
+            'relacionado_id'
+        )->withPivot('tipo_relacion')
+            ->withTimestamps();
+    }
+
+    // Contenidos que tienen esta ficha como relacionada.
+    public function relacionadosInversos()
+    {
+        return $this->belongsToMany(
+            Contenido::class,
+            'contenido_relaciones',
+            'relacionado_id',
+            'contenido_id'
+        )->withPivot('tipo_relacion')
+            ->withTimestamps();
     }
 }

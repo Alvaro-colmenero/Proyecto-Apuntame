@@ -89,18 +89,52 @@ class ContenidoController extends Controller
     }
 
     // Muestra la ficha con los detalles de un contenido concreto.
+
     public function show(Contenido $contenido)
     {
-        // Cargamos los géneros, las temporadas y sus episodios.
-        // Tanto las temporadas como los episodios se ordenan
-        // por su número correspondiente.
+        // Cargamos los datos de la ficha.
         $contenido->load([
             'generos',
             'temporadas' => fn ($q) => $q->orderBy('numero'),
             'temporadas.episodios' => fn ($q) => $q->orderBy('numero'),
+            'relaciones',
+            'relacionadosInversos',
         ]);
 
-        // Enviamos el contenido con sus relaciones a la vista de detalle.
-        return view('contenidos.show', compact('contenido'));
+        // -----------------------------------------
+        // RECOMENDACIONES AUTOMÁTICAS
+        // -----------------------------------------
+
+        $generoIds = $contenido->generos->pluck('id');
+
+        $recomendaciones = collect();
+
+        if ($generoIds->isNotEmpty()) {
+            $recomendaciones = Contenido::where('id', '!=', $contenido->id)
+                ->whereHas('generos', function ($q) use ($generoIds) {
+                    $q->whereIn('generos.id', $generoIds);
+                })
+                ->with('generos')
+                ->inRandomOrder()
+                ->take(8)
+                ->get();
+        }
+
+        // -----------------------------------------
+        // CONTENIDOS RELACIONADOS
+        // -----------------------------------------
+
+        $relacionados = $contenido->relaciones
+            ->concat($contenido->relacionadosInversos)
+            ->unique('id')
+            ->values();
+
+        // Enviamos los datos a la vista.
+        return view('contenidos.show', compact(
+            'contenido',
+            'recomendaciones',
+            'relacionados'
+        ));
     }
+
 }
