@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-11-2026 a las 12:48:53
+-- Tiempo de generación: 26-11-2026 a las 08:19:43
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -65,15 +65,21 @@ INSERT INTO `biblioteca` (`usuario_id`, `contenido_id`, `estado`, `puntuacion`, 
 (5, 5, 'pendiente', NULL, NULL, NULL, NULL, 1),
 (5, 6, 'pausada', NULL, NULL, NULL, NULL, 0),
 (5, 10, 'pendiente', NULL, NULL, NULL, NULL, 1),
+(5, 13, 'pendiente', NULL, NULL, NULL, NULL, 0),
+(5, 18, 'abandonada', NULL, NULL, NULL, NULL, 0),
+(5, 19, 'pendiente', NULL, NULL, NULL, NULL, 0),
 (5, 21, 'abandonada', NULL, NULL, NULL, NULL, 0),
 (5, 26, 'vista', NULL, NULL, NULL, NULL, 0),
 (5, 30, 'viendo', NULL, NULL, NULL, NULL, 0),
 (5, 34, 'abandonada', NULL, NULL, NULL, NULL, 1),
 (5, 35, 'pendiente', NULL, NULL, NULL, NULL, 0),
-(5, 37, 'pausada', NULL, NULL, NULL, NULL, 1),
+(5, 36, 'pendiente', NULL, NULL, NULL, NULL, 0),
+(5, 37, 'pendiente', NULL, NULL, NULL, NULL, 0),
 (5, 41, 'vista', NULL, NULL, NULL, NULL, 0),
 (5, 42, 'vista', NULL, NULL, NULL, NULL, 0),
 (5, 43, 'vista', NULL, NULL, NULL, NULL, 0),
+(5, 47, 'pendiente', NULL, NULL, NULL, NULL, 0),
+(5, 48, 'pendiente', NULL, NULL, NULL, NULL, 0),
 (5, 52, 'pendiente', NULL, NULL, NULL, NULL, 0),
 (5, 54, 'pendiente', NULL, NULL, NULL, NULL, 0),
 (5, 55, 'pendiente', NULL, NULL, NULL, NULL, 1),
@@ -837,6 +843,9 @@ INSERT INTO `episodios_vistos` (`usuario_id`, `episodio_id`, `fecha_visto`) VALU
 (5, 20, '2026-11-06 10:55:45'),
 (5, 21, '2026-11-06 10:55:45'),
 (5, 22, '2026-11-06 10:55:45'),
+(5, 125, '2026-11-23 12:11:16'),
+(5, 126, '2026-11-23 12:11:16'),
+(5, 127, '2026-11-23 12:11:16'),
 (5, 152, '2026-11-06 11:33:34'),
 (5, 153, '2026-11-06 11:33:34'),
 (5, 154, '2026-11-06 11:33:34'),

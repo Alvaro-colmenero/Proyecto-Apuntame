@@ -15,56 +15,36 @@ class PerfilController extends Controller
         $usuarioPerfil = auth()->user();
 
         $contenidosPerfil = DB::table('biblioteca')
-        ->join('contenidos', 'biblioteca.contenido_id', '=', 'contenidos.id')
-        ->where('biblioteca.usuario_id', $usuarioPerfil->id)
-        ->select(
-            'contenidos.*',
-            'biblioteca.estado',
-            'biblioteca.notas',
-            'biblioteca.puntuacion',
-            'biblioteca.fecha_inicio',
-            'biblioteca.fecha_fin',
-            'biblioteca.favorito as favorito'
-        )
-        ->selectSub(function ($query) {
-            $query->from('temporadas')
-                ->join(
-                    'episodios',
-                    'episodios.temporada_id',
-                    '=',
-                    'temporadas.id'
-                )
-                ->whereColumn(
-                    'temporadas.contenido_id',
-                    'contenidos.id'
-                )
-                ->selectRaw('COUNT(episodios.id)');
-        }, 'max_episodios')
-        ->selectSub(function ($query) use ($usuarioPerfil) {
-            $query->from('temporadas')
-                ->join(
-                    'episodios',
-                    'episodios.temporada_id',
-                    '=',
-                    'temporadas.id'
-                )
-                ->join(
-                    'episodios_vistos',
-                    'episodios_vistos.episodio_id',
-                    '=',
-                    'episodios.id'
-                )
-                ->whereColumn(
-                    'temporadas.contenido_id',
-                    'contenidos.id'
-                )
-                ->where(
-                    'episodios_vistos.usuario_id',
-                    $usuarioPerfil->id
-                )
-                ->selectRaw('COUNT(episodios_vistos.episodio_id)');
-        }, 'episodios_vistos_usuario')
-        ->get();
+            ->join('contenidos', 'biblioteca.contenido_id', '=', 'contenidos.id')
+            ->where('biblioteca.usuario_id', $usuarioPerfil->id)
+            ->select(
+                'contenidos.*',
+                'biblioteca.estado',
+                'biblioteca.notas',
+                'biblioteca.puntuacion',
+                'biblioteca.fecha_inicio',
+                'biblioteca.fecha_fin',
+                'biblioteca.favorito as favorito'
+            )
+            ->selectSub(function ($query) {
+                $query->from('episodios')
+                    ->join('temporadas', 'episodios.temporada_id', '=', 'temporadas.id')
+                    ->whereColumn('temporadas.contenido_id', 'contenidos.id')
+                    ->selectRaw('COUNT(*)');
+            }, 'max_episodios')
+            ->selectSub(function ($query) use ($usuarioPerfil) {
+                $query->from('episodios_vistos')
+                    ->join('episodios', 'episodios_vistos.episodio_id', '=', 'episodios.id')
+                    ->join('temporadas', 'episodios.temporada_id', '=', 'temporadas.id')
+                    ->whereColumn('temporadas.contenido_id', 'contenidos.id')
+                    ->where('episodios_vistos.usuario_id', $usuarioPerfil->id)
+                    ->selectRaw('COUNT(*)');
+            }, 'episodios_vistos_usuario')
+            ->orderByDesc('biblioteca.fecha_fin')
+            ->orderByDesc('biblioteca.fecha_inicio')
+            ->limit(12)
+            ->get();
+
 
 
             $peliculasPerfil = $this->obtenerBibliotecaPorTipo(
