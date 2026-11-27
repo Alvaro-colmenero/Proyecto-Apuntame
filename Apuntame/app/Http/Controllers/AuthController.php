@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -29,10 +30,12 @@ class AuthController extends Controller
             'password' => Hash::make($datos['password']),
         ]);
 
+        event(new Registered($usuario));
+
         Auth::login($usuario);
         $request->session()->regenerate();
 
-        return redirect()->route('perfil.index');
+        return redirect()->route('verification.notice');
 
     }
 
